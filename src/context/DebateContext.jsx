@@ -1,7 +1,7 @@
 "use client";
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { subscribeToGamesList, subscribeToTeams, subscribeToGame } from '../services/debateService';
-
+import { onSnapshot } from 'firebase/firestore';
 const DebateContext = createContext();
 
 // Initial state
