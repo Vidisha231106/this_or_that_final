@@ -276,9 +276,12 @@ export const switchSidesInGame = async (classroomId,gameId) => {
     if (gameSnap.exists()) {
       const currentData = gameSnap.data();
       const newSpeakingFor = currentData.speakingFor === 'A' ? 'B' : 'A';
+      const newStance = currentData.teamAStance === 'Pro' ? 'Con' : 'Pro';
+
       
       await updateDoc(gameDocRef, {
         speakingFor: newSpeakingFor,
+        teamAStance: newStance,
         votes: { switch: 0, dontSwitch: 0 }, // Reset votes on switch
         lastUpdated: new Date().toISOString()
       });
@@ -540,6 +543,7 @@ export const createGame = async (classroomId, gameData) => {
       timer: 300,
       isTimerRunning: false,
       speakingFor: 'A',
+      teamAStance: 'Pro',
       createdAt: new Date().toISOString()
     };
 

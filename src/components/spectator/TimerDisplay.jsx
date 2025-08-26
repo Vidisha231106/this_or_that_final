@@ -12,8 +12,8 @@ function TimerDisplay() {
 
   useEffect(() => {
     setDisplayTime(timer);
-  }, [timer]);
-
+  }, [timer, isTimerRunning]);
+  
   useEffect(() => {
     let interval = null;
 

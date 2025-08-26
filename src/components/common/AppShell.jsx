@@ -1,6 +1,6 @@
 "use client";
-import React, { useState, useEffect } from 'react'; // 👈 Add this line
-import { DebateProvider } from '@/context/DebateContext.jsx';
+import React, { useState, useEffect } from 'react';
+import { useDebate } from '@/context/DebateContext';
 
 // Components
 import LandingPage from '@/components/common/LandingPage';
@@ -10,211 +10,136 @@ import SpectatorJoin from '@/components/spectator/SpectatorJoin';
 import SpectatorView from '@/components/spectator/SpectatorView';
 import Header from '@/components/common/Header';
 
-// Styles
-import '@/styles/App.css';
-
-
 function AppShell() {
-  const [userRole, setUserRole] = useState(null); // 'admin', 'spectator', or null
+  const { state, actions } = useDebate();
+  const [hasMounted, setHasMounted] = useState(false);
+  const [userRole, setUserRole] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentClassroom, setCurrentClassroom] = useState(null);
-  const [currentStudent, setCurrentStudent] = useState(null); // Store student data
+  const [currentStudent, setCurrentStudent] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Safe localStorage wrapper to prevent errors
-  const safeGetItem = (key) => {
-    try {
-      if (typeof window !== 'undefined' && window.localStorage) {
-        return localStorage.getItem(key);
-      }
-    } catch (error) {
-      console.warn('localStorage access failed:', error);
-    }
-    return null;
-  };
-
-  const safeSetItem = (key, value) => {
-    try {
-      if (typeof window !== 'undefined' && window.localStorage) {
-        localStorage.setItem(key, value);
-      }
-    } catch (error) {
-      console.warn('localStorage write failed:', error);
-    }
-  };
-
-  const safeRemoveItem = (key) => {
-    try {
-      if (typeof window !== 'undefined' && window.localStorage) {
-        localStorage.removeItem(key);
-      }
-    } catch (error) {
-      console.warn('localStorage remove failed:', error);
-    }
-  };
-
-  // Check for existing session on load
+  // This effect runs only once in the browser to ensure no hydration errors
   useEffect(() => {
-    const checkSession = () => {
-      try {
-        const savedRole = safeGetItem('userRole');
-        const savedClassroom = safeGetItem('currentClassroom');
-        const savedStudent = safeGetItem('currentStudent');
-        const savedAuth = safeGetItem('isAuthenticated');
-
-        if (savedRole && savedAuth === 'true') {
-          setUserRole(savedRole);
-          setIsAuthenticated(true);
-          
-          if (savedClassroom) {
-            try {
-              const classroom = JSON.parse(savedClassroom);
-              setCurrentClassroom(classroom);
-            } catch (error) {
-              console.warn('Failed to parse saved classroom:', error);
-              // Clear corrupted data
-              safeRemoveItem('currentClassroom');
-            }
-          }
-          
-          if (savedStudent) {
-            try {
-              const student = JSON.parse(savedStudent);
-              setCurrentStudent(student);
-            } catch (error) {
-              console.warn('Failed to parse saved student:', error);
-              // Clear corrupted data
-              safeRemoveItem('currentStudent');
-            }
-          }
-        }
-      } catch (error) {
-        console.error('Error checking session:', error);
-        // Clear all data if there's an error
-        handleLogout();
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    checkSession();
+    setHasMounted(true);
   }, []);
 
-  // Handle role selection from landing page
+  // This effect handles loading a previously saved session
+  useEffect(() => {
+    const savedClassroomString = localStorage.getItem('currentClassroom');
+    if (savedClassroomString) {
+      try {
+        const classroom = JSON.parse(savedClassroomString);
+        const studentString = localStorage.getItem('currentStudent');
+        const student = studentString ? JSON.parse(studentString) : null;
+
+        // CRUCIAL: Tell the context which classroom is active
+        actions.setClassroom(classroom);
+        
+        // Update the local state
+        setCurrentClassroom(classroom);
+        setCurrentStudent(student);
+        setUserRole(localStorage.getItem('userRole'));
+        setIsAuthenticated(true);
+      } catch (error) {
+        console.error('Failed to parse saved session, clearing...', error);
+        handleLogout();
+      }
+    }
+    setIsLoading(false);
+  }, []); // Runs only once on initial load
+
   const handleRoleSelect = (role) => {
     setUserRole(role);
   };
 
-  // Handle admin authentication
   const handleAdminAuth = (adminData) => {
-    try {
-      setIsAuthenticated(true);
-      safeSetItem('userRole', 'admin');
-      safeSetItem('isAuthenticated', 'true');
-      safeSetItem('adminData', JSON.stringify(adminData));
-    } catch (error) {
-      console.error('Error setting admin auth:', error);
-    }
+    setIsAuthenticated(true);
+    localStorage.setItem('userRole', 'admin');
+    localStorage.setItem('isAuthenticated', 'true');
+    localStorage.setItem('adminData', JSON.stringify(adminData));
   };
 
-  // Handle spectator classroom join with student registration
   const handleSpectatorJoin = (classroom, studentData) => {
     try {
+      // 1. Tell the context which classroom is now active
+      actions.setClassroom(classroom);
+
+      // 2. Update the local state
       setIsAuthenticated(true);
       setCurrentClassroom(classroom);
       setCurrentStudent(studentData);
-      safeSetItem('userRole', 'spectator');
-      safeSetItem('isAuthenticated', 'true');
-      safeSetItem('currentClassroom', JSON.stringify(classroom));
-      safeSetItem('currentStudent', JSON.stringify(studentData));
-      safeSetItem(`student_details_${classroom.id}`, JSON.stringify(studentData));
+      setUserRole('spectator');
+
+      // 3. Save the session to localStorage for rejoining
+      localStorage.setItem('userRole', 'spectator');
+      localStorage.setItem('isAuthenticated', 'true');
+      localStorage.setItem('currentClassroom', JSON.stringify(classroom));
+      localStorage.setItem('currentStudent', JSON.stringify(studentData));
+      localStorage.setItem(`student_details_${classroom.id}`, JSON.stringify(studentData));
     } catch (error) {
       console.error('Error setting spectator session:', error);
     }
   };
 
-  // Handle logout/back to landing
   const handleLogout = () => {
     setUserRole(null);
     setIsAuthenticated(false);
     setCurrentClassroom(null);
     setCurrentStudent(null);
     
-    // Clear localStorage safely
-    const keysToRemove = [
-      'userRole',
-      'isAuthenticated', 
-      'currentClassroom',
-      'currentStudent',
-      'adminData'
-    ];
-    
-    keysToRemove.forEach(key => {
-      safeRemoveItem(key);
-    });
-    
-    // Clear any voting history
-    try {
-      if (typeof window !== 'undefined' && window.localStorage) {
-        Object.keys(localStorage).forEach(key => {
-          if (key.startsWith('voted_')) {
-            safeRemoveItem(key);
-          }
-        });
-      }
-    } catch (error) {
-      console.warn('Error clearing vote history:', error);
-    }
+    const keysToRemove = ['userRole', 'isAuthenticated', 'currentClassroom', 'currentStudent', 'adminData'];
+    keysToRemove.forEach(key => localStorage.removeItem(key));
   };
 
-  if (isLoading) {
+  // This prevents hydration errors by ensuring the server and client render the same thing initially
+  if (!hasMounted || isLoading) {
     return (
-      <div className="app-container">
-        <div className="loading">
-          <div className="loading-spinner"></div>
-          <p>Loading...</p>
-        </div>
+      <div className="loading">
+        <div className="loading-spinner"></div>
+        <p>Loading...</p>
       </div>
     );
   }
 
-// In AppShell.jsx, replace the entire return statement with this:
-
-return (
-    <DebateProvider>
-      <div className="app-container">
-        <Header 
-          userRole={userRole}
-          currentClassroom={currentClassroom}
-          currentStudent={currentStudent}
-          onLogout={handleLogout}
-        />
-        
-        {/* Simplified conditional rendering based on your existing logic */}
-        {(() => {
-          if (isAuthenticated) {
-            if (userRole === 'admin') {
-              return <AdminDashboard />;
-            }
-            if (userRole === 'spectator') {
-              return <SpectatorView classroom={currentClassroom} student={currentStudent} />;
-            }
-          }
-
+  // Main render logic
+  return (
+    <div className="app-container">
+      <Header 
+        userRole={userRole}
+        onLogout={handleLogout}
+      />
+      
+      {(() => {
+        if (isAuthenticated) {
           if (userRole === 'admin') {
-            return <AdminLogin onAuth={handleAdminAuth} onBack={handleLogout} />;
+            return <AdminDashboard />;
           }
-
           if (userRole === 'spectator') {
-            return <SpectatorJoin onJoin={handleSpectatorJoin} onBack={handleLogout} />;
+            const teamsAreLoaded = (state.teamA && state.teamA.length > 0) || (state.teamB && state.teamB.length > 0);
+            if (currentStudent && teamsAreLoaded) {
+              return <SpectatorView classroom={currentClassroom} student={currentStudent} />;
+            } else {
+              return (
+                <div className="loading">
+                  <div className="loading-spinner"></div>
+                  <p>Syncing team data...</p>
+                </div>
+              );
+            }
           }
+        }
 
-          // Default view if no role is selected
-          return <LandingPage onRoleSelect={handleRoleSelect} />;
-        })()}
-        
-      </div>
-    </DebateProvider>
+        if (userRole === 'admin') {
+          return <AdminLogin onAuth={handleAdminAuth} onBack={handleLogout} />;
+        }
+        if (userRole === 'spectator') {
+          return <SpectatorJoin onJoin={handleSpectatorJoin} onBack={handleLogout} />;
+        }
+
+        return <LandingPage onRoleSelect={handleRoleSelect} />;
+      })()}
+    </div>
   );
 }
 

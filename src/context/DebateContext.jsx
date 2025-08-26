@@ -1,109 +1,85 @@
 "use client";
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
-import { subscribeToGamesList, subscribeToTeams, subscribeToGame } from '../services/debateService';
-import { onSnapshot } from 'firebase/firestore';
+import { doc, onSnapshot } from 'firebase/firestore';
+import { db } from '@/services/firebase';
+import { subscribeToTeams, subscribeToGame } from '@/services/debateService';
+
 const DebateContext = createContext();
 
-// Initial state
+// Initial state with all properties defined
 const initialState = {
-  topic: "Is technology making us less social?",
+  topic: "Waiting for topic...",
   votes: { switch: 0, dontSwitch: 0 },
   speakingFor: 'A',
-  teamA: [],
-  teamB: [],
+  teamAStance: 'Pro',
+  teamA: [], // Master roster
+  teamB: [], // Master roster
   debateStarted: false,
   currentClassroom: null,
-  isLoading: false,
+  isLoading: true,
   error: null,
-  hasVoted: false,
-  time: 60,
+  timer: 0,
   isTimerRunning: false,
-  activeGameId: null 
+  activePlayers: { teamA: [], teamB: [] },
+  activeGameId: null,
 };
 
-// Action types
+// All possible actions
 const ACTIONS = {
   SET_LOADING: 'SET_LOADING',
   SET_ERROR: 'SET_ERROR',
-  SET_TOPIC: 'SET_TOPIC',
-  SET_VOTES: 'SET_VOTES',
-  SET_SPEAKING_FOR: 'SET_SPEAKING_FOR',
   SET_TEAMS: 'SET_TEAMS',
-  SET_DEBATE_STARTED: 'SET_DEBATE_STARTED',
   SET_CLASSROOM: 'SET_CLASSROOM',
-  SET_HAS_VOTED: 'SET_HAS_VOTED',
-  SET_TIMER_STATE: 'SET_TIMER_STATE',
-  SET_TIME: 'SET_TIME',
+  SET_DEBATE_STARTED: 'SET_DEBATE_STARTED',
   UPDATE_DEBATE_DATA: 'UPDATE_DEBATE_DATA',
   RESET_STATE: 'RESET_STATE'
 };
 
-// Reducer
+// The reducer function to handle state changes
 function debateReducer(state, action) {
   switch (action.type) {
     case ACTIONS.SET_LOADING:
       return { ...state, isLoading: action.payload };
     case ACTIONS.SET_ERROR:
-      return { ...state, error: action.payload, isLoading: false };
-    case ACTIONS.SET_TOPIC:
-      return { ...state, topic: action.payload };
-    case ACTIONS.SET_VOTES:
-      return { ...state, votes: action.payload };
-    case ACTIONS.SET_SPEAKING_FOR:
-      return { ...state, speakingFor: action.payload };
-    case ACTIONS.SET_TEAMS:
-      return { 
-        ...state, 
-        teamA: action.payload.teamA, 
-        teamB: action.payload.teamB 
-      };
-    case ACTIONS.SET_DEBATE_STARTED:
-      return { ...state, debateStarted: action.payload };
+      return { ...state, error: action.payload };
     case ACTIONS.SET_CLASSROOM:
       return { ...state, currentClassroom: action.payload };
-    case ACTIONS.SET_HAS_VOTED:
-      return { ...state, hasVoted: action.payload };
+    case ACTIONS.SET_DEBATE_STARTED:
+      return { ...state, debateStarted: action.payload };
+    case ACTIONS.SET_TEAMS:
+      // This is the corrected case that was causing the bug
+      return {
+        ...state, // Keep the existing state
+        teamA: action.payload.teamA || [], // Only update teamA
+        teamB: action.payload.teamB || [], // Only update teamB
+      };
     case ACTIONS.UPDATE_DEBATE_DATA:
-      return { 
-        ...state, 
-        ...action.payload,
-        isLoading: false,
-        error: null 
-      };
+      return { ...state, ...action.payload };
     case ACTIONS.RESET_STATE:
-      return { ...initialState };
-    case ACTIONS.SET_TIMER_STATE:
-      return { 
-        ...state, 
-        timer: action.payload.timer, 
-        isTimerRunning: action.payload.isTimerRunning 
-      };
-    case ACTIONS.SET_TIME:
-      return { ...state, timer: action.payload };
+      return { ...initialState, isLoading: false };
     default:
       return state;
   }
 }
 
-// Provider component
+// The provider component that wraps the app
 export function DebateProvider({ children }) {
   const [state, dispatch] = useReducer(debateReducer, initialState);
 
-  // Subscribe to real-time updates when classroom is set
+  // The final, efficient useEffect with nested listeners
   useEffect(() => {
-    if (!state.currentClassroom?.id) return;
-  
-    let unsubscribeGame = () => {}; // To hold our inner listener
-  
-    // First, listen to the main classroom document to find the activeGameId
+    if (!state.currentClassroom?.id) {
+      dispatch({ type: ACTIONS.SET_LOADING, payload: false });
+      return;
+    }
+
+    let unsubscribeGame = () => {};
+
     const unsubscribeClassroom = onSnapshot(doc(db, 'classrooms', state.currentClassroom.id), (classroomDoc) => {
       const liveGameId = classroomDoc.data()?.activeGameId;
-  
-      // Unsubscribe from any previous game listener
-      unsubscribeGame();
-  
+      unsubscribeGame(); // Unsubscribe from any previous game listener
+
       if (liveGameId) {
-        // If a game is active, subscribe specifically to that game
         unsubscribeGame = subscribeToGame(state.currentClassroom.id, liveGameId, (liveGame) => {
           if (liveGame) {
             dispatch({
@@ -113,6 +89,7 @@ export function DebateProvider({ children }) {
                 topic: liveGame.topic,
                 votes: liveGame.votes,
                 speakingFor: liveGame.speakingFor,
+                teamAStance: liveGame.teamAStance,
                 debateStarted: true,
                 timer: liveGame.timer,
                 isTimerRunning: liveGame.isTimerRunning,
@@ -125,43 +102,32 @@ export function DebateProvider({ children }) {
           }
         });
       } else {
-        // If no game is active, reset the state
         dispatch({ type: ACTIONS.SET_DEBATE_STARTED, payload: false });
       }
     });
-  
-    // The listener for the master team roster stays the same
+
     const unsubscribeTeams = subscribeToTeams(state.currentClassroom.id, (teamsData) => {
       if (teamsData) {
         dispatch({ type: ACTIONS.SET_TEAMS, payload: teamsData });
       }
     });
-  
+
     return () => {
       unsubscribeClassroom();
       unsubscribeGame();
       unsubscribeTeams();
     };
-  }, [state.currentClassroom?.id]);  
+  }, [state.currentClassroom?.id]);
+
   const actions = {
     setLoading: (loading) => dispatch({ type: ACTIONS.SET_LOADING, payload: loading }),
     setError: (error) => dispatch({ type: ACTIONS.SET_ERROR, payload: error }),
-    setTopic: (topic) => dispatch({ type: ACTIONS.SET_TOPIC, payload: topic }),
-    setVotes: (votes) => dispatch({ type: ACTIONS.SET_VOTES, payload: votes }),
-    setSpeakingFor: (side) => dispatch({ type: ACTIONS.SET_SPEAKING_FOR, payload: side }),
-    setTeams: (teams) => dispatch({ type: ACTIONS.SET_TEAMS, payload: teams }),
-    setDebateStarted: (started) => dispatch({ type: ACTIONS.SET_DEBATE_STARTED, payload: started }),
     setClassroom: (classroom) => dispatch({ type: ACTIONS.SET_CLASSROOM, payload: classroom }),
-    setHasVoted: (voted) => dispatch({ type: ACTIONS.SET_HAS_VOTED, payload: voted }),
-    resetState: () => dispatch({ type: ACTIONS.RESET_STATE }),
-    setTimerState: (timerState) => dispatch({ type: ACTIONS.SET_TIMER_STATE, payload: timerState }),
-    setTime: (time) => dispatch({ type: ACTIONS.SET_TIME, payload: time })
+    setTeams: (teams) => dispatch({ type: ACTIONS.SET_TEAMS, payload: teams }),
+    resetState: () => dispatch({ type: ACTIONS.RESET_STATE })
   };
 
-  const value = {
-    state,
-    actions
-  };
+  const value = { state, actions };
 
   return (
     <DebateContext.Provider value={value}>
@@ -170,7 +136,7 @@ export function DebateProvider({ children }) {
   );
 }
 
-// Custom hook to use the context
+// The custom hook to access the context
 export function useDebate() {
   const context = useContext(DebateContext);
   if (!context) {
@@ -178,5 +144,3 @@ export function useDebate() {
   }
   return context;
 }
-
-export default DebateContext;

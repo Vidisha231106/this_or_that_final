@@ -36,7 +36,7 @@ function SpectatorJoin({ onJoin, onBack }) {
         setError('Invalid session password. Please check with the volunteer.');
         return;
       }
-      const savedDetails = localStorage.getItem(`student_details_${foundClassroom.id}`);
+    const savedDetails = localStorage.getItem(`student_details_${foundClassroom.id}`);
     if (savedDetails) {
       // If details are found, show the quick rejoin prompt
       setReturningStudent(JSON.parse(savedDetails));

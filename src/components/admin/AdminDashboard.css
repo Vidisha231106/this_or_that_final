@@ -660,7 +660,7 @@
   gap: 12px;
   margin-top: 15px;
   padding-top: 15px;
-  border-top: 1px solid #eee;
+  border-top: 1px solid #672828;
   flex-wrap: wrap; 
 }
 
@@ -884,7 +884,7 @@
 .game-management h3 {
   font-size: 1.75rem;
   margin-bottom: 24px;
-  color: var(--text, #ffffff);
+  color: var(--text, #433e3e);
   position: relative;
   z-index: 1;
   font-weight: 700;
@@ -907,7 +907,7 @@
 }
 
 .games-list > p {
-  color: var(--muted, #6b7280);
+  color: var(--muted, #43464b);
   font-style: italic;
   text-align: center;
   padding: 32px 0;
@@ -1214,14 +1214,14 @@
 }
 
 .topic-management {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(27, 25, 25, 0.03);
   border-radius: 12px;
   padding: 20px;
   margin-bottom: 24px;
 }
 
 .topic-management strong {
-  color: var(--text, white);
+  color: var(--text, rgb(42, 40, 40));
   display: block;
   margin-bottom: 12px;
 }

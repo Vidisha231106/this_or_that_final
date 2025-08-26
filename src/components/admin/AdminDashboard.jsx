@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Plus, Settings, Users, Play, RotateCcw, Eye, EyeOff, Trash2 } from 'lucide-react';
 import { useDebate } from '../../context/DebateContext';
 import TimerDisplay from '../spectator/TimerDisplay';
+
 import {
   createClassroom,
   generateDebatePassword,
@@ -31,6 +32,7 @@ import './AdminDashboard.css';
 
 function AdminDashboard() {
   const { state, actions } = useDebate();
+  
   const [view, setView] = useState('dashboard'); 
   const [isClient, setIsClient] = useState(false);
   const [isGeneratingTopic, setIsGeneratingTopic] = useState(false);
@@ -456,84 +458,72 @@ function AdminDashboard() {
         )}
   
         {/* Updated Debate Control Card - only shows if a game is selected */}
-        {activeGame && (
-          <div className="debate-control card">
-          <h3>Controls for: "{activeGame.gameName}"</h3>
-          
-          <div className="active-speakers">
-          <h4>Currently Debating:</h4>
-          <div className="speaker-lists">
-            <div>
-              <strong>Team A:</strong>
-              <span>{activeGame.teamAPlayers.map(p => p.name).join(', ')}</span>
-            </div>
-            <div>
-              <strong>Team B:</strong>
-              <span>{activeGame.teamBPlayers.map(p => p.name).join(', ')}</span>
-            </div>
-          </div>
+{activeGame && (
+  <div className="debate-control card">
+    <h3>Controls for: "{activeGame.gameName}"</h3>
+    
+    {/* Topic Management Form */}
+    <div className="topic-management">
+      <strong>Current Topic:</strong> {activeGame.topic}
+      <form onSubmit={(e) => { e.preventDefault(); handleUpdateTopic(); }}>
+        <input
+          type="text"
+          className="form-input"
+          placeholder="Enter or generate a new topic..."
+          value={newTopic}
+          onChange={(e) => setNewTopic(e.target.value)}
+        />
+        <button type="button" className="btn btn-secondary" onClick={handleGenerateTopic} disabled={isGeneratingTopic}>
+          {isGeneratingTopic ? 'Generating...' : '✨ Suggest'}
+        </button>
+        <button type="submit" className="btn btn-primary" disabled={!newTopic.trim()}>
+          Update Topic
+        </button>
+      </form>
+    </div>
+
+    {/* Shows only when a game is WAITING */}
+    {activeGame.status === 'waiting' && (
+      <div className="start-section">
+        <p>This game is ready to begin.</p>
+        <button onClick={handleStartGame} className="btn-success">
+          <Play size={16} /> Start This Game
+        </button>
+      </div>
+    )}
+
+    {/* Shows only when a game is LIVE */}
+    {activeGame.status === 'live' && (
+      <div className="active-debate">
+        <TimerDisplay />
+        <p>
+          <strong>Currently Speaking:</strong> Team {activeGame.speakingFor} 
+          ({activeGame.speakingFor === 'A' ? activeGame.teamAStance : (activeGame.teamAStance === 'Pro' ? 'Con' : 'Pro')})
+        </p>
+        <div className="main-controls">
+          <button onClick={handleSwitchSides} className="btn btn-primary">
+            <RotateCcw size={16} /> Switch Sides
+          </button>
+          {/* Add an "End Game" button here in the future */}
         </div>
-        {activeGame.status === 'live' && <TimerDisplay />} {/* This will now show the active game's timer */}
-  
-            <div className="topic-management">
-              <strong>Topic:</strong> {activeGame.topic}
-              <form onSubmit={(e) => { e.preventDefault(); handleUpdateTopic(); }} className="topic-form">
-                <input
-                  type="text"
-                  className="form-input"
-                  placeholder="Enter new topic..."
-                  value={newTopic}
-                  onChange={(e) => setNewTopic(e.target.value)}
-                />
-            <button type="button" onClick={handleGenerateTopic} disabled={isGeneratingTopic}>
-                {isGeneratingTopic ? 'Generating...' : '✨ Suggest Topic'}
-              </button>
-              <button type="submit">Update</button>              
-              </form>
-            </div>
-            {activeGame.status === 'live' && (
-            <div className="active-debate">
-              <div className="vote-display">
-                <div className="vote-item">
-                  <span>Switch Sides:</span>
-                  <span className="vote-count">{activeGame.votes.switch}</span>
-                </div>
-                <div className="vote-item">
-                  <span>Keep Current:</span>
-                  <span className="vote-count">{activeGame.votes.dontSwitch}</span>
-                </div>
-              </div>
-  
-              <div className="main-controls">
-              {activeGame.status === 'waiting' && (
-                <button onClick={handleStartGame} className="btn-success" disabled={activeGame.status === 'live'}>
-                  <Play size={16} /> Start Game
-                </button>
-              )}
-                <button onClick={handleSwitchSides} className="btn-primary">
-                  <RotateCcw size={16} /> Switch Sides
-                </button>
-              </div>
-  
-              <div className="timer-controls">
-                <div className="timer-input-group">
-                  <label htmlFor="timer-minutes">Set Time (min):</label>
-                  <input
-                    type="number"
-                    id="timer-minutes"
-                    value={timerMinutes}
-                    onChange={(e) => setTimerMinutes(Number(e.target.value))}
-                    className="timer-input"
-                  />
-                </div>
-                <button onClick={handleTimerStart} className="btn-primary">Start</button>
-                <button onClick={handleTimerPause} className="btn-secondary">Pause</button>
-                <button onClick={handleTimerReset} className="btn-danger">Reset</button>
-              </div>
-            </div>
-          )}
+        <div className="timer-controls">
+          <div className="timer-input-group">
+            <label htmlFor="timer-minutes">Set Time (min):</label>
+            <input
+              type="number"
+              id="timer-minutes"
+              value={timerMinutes}
+              onChange={(e) => setTimerMinutes(Number(e.target.value))}
+            />
           </div>
-        )}
+          <button onClick={handleTimerStart}>Start</button>
+          <button onClick={handleTimerPause}>Pause</button>
+          <button onClick={handleTimerReset}>Reset</button>
+        </div>
+      </div>
+    )}
+  </div>
+)}          
          {/* Student Management - Auto-Assigned Teams */}
          <div className="team-management card">
           <h3>
@@ -572,8 +562,8 @@ function AdminDashboard() {
                   </li>
                 ))}
                 {state.teamA.length === 0 && (
-                  <li className="no-members">No students assigned yet</li>
-                )}
+                <li className="no-members">No students assigned yet</li>
+              )}
               </ul>
             </div>
 
