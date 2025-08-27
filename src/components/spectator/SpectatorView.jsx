@@ -101,7 +101,7 @@ function SpectatorView({ classroom, student }) {
                 </div>
               </div>
               <div className="current-speaker">
-                <span className="speaker-label">Speaking For:</span>
+                <span className="speaker-label">Speaking Pro:</span>
                 <span className={`team-badge team-${state.speakingFor.toLowerCase()}`}>Team {state.speakingFor}</span>
               </div>
             </div>
@@ -120,6 +120,10 @@ function SpectatorView({ classroom, student }) {
                 <h4>Team A Speakers ({state.teamAStance})</h4>
                 <ul>{state.activePlayers.teamA.map(p => <li key={p.admissionNumber}>{p.name}</li>)}</ul>
               </div>
+              <div className="vs-divider">
+                <div className="vs-text">VS</div>
+              </div>
+
               <div className="team-column">
                 <h4>Team B Speakers ({state.teamAStance === 'Pro' ? 'Con' : 'Pro'})</h4>
                 <ul>{state.activePlayers.teamB.map(p => <li key={p.admissionNumber}>{p.name}</li>)}</ul>

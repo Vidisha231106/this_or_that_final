@@ -1,7 +1,12 @@
 "use client";
 import React, { useState } from 'react';
 import { ArrowLeft, Plus, RefreshCw, Copy, Check } from 'lucide-react';
-import { generateDebatePassword, generateDebateTopic } from '../../services/geminiService';
+import { 
+  generateDebatePassword, 
+  generateDebateTopic, 
+  getClassroomByPassword 
+} from '../../services/geminiService';
+
 import './ClassroomSetup.css';
 
 const classOptions = [
@@ -16,10 +21,9 @@ function ClassroomSetup({ onClassroomCreated, onBack }) {
   const [formData, setFormData] = useState({
     name: classOptions[0], // 👈 Set the default value
     adminName: '',
-    topic: ''
+    password: ''
   });
   
-  const [password, setPassword] = useState('');
   const [isGeneratingTopic, setIsGeneratingTopic] = useState(false);
   const [isGeneratingPassword, setIsGeneratingPassword] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
@@ -40,33 +44,32 @@ function ClassroomSetup({ onClassroomCreated, onBack }) {
   const handleGeneratePassword = async () => {
     setIsGeneratingPassword(true);
     setError('');
-    
     try {
-      const generatedPassword = await generateDebatePassword();
-      setPassword(generatedPassword);
+      let newPassword;
+      let isUnique = false;
+      let attempts = 0;
+      while (!isUnique && attempts < 10) {
+        newPassword = await generateDebatePassword();
+        const existing = await getClassroomByPassword(newPassword);
+        if (!existing) {
+          isUnique = true;
+        }
+        attempts++;
+      }
+      if (!isUnique) throw new Error('Could not find a unique password.');
+  
+      // Save the unique password to the formData state
+      setFormData(prev => ({ ...prev, password: newPassword }));
       setShowPassword(true);
-    } catch (error) {
-      setError('Failed to generate password. Please try again.');
-      console.error('Password generation error:', error);
+    } catch (err) {
+      setError('Failed to generate a unique password.');
     } finally {
       setIsGeneratingPassword(false);
     }
   };
-  const handleGenerateTopic = async () => {
-    setIsGeneratingTopic(true);
+   const handleCopyPassword = async () => {
     try {
-      const topic = await generateDebateTopic();
-      setFormData(prev => ({ ...prev, topic: topic })); 
-    } catch (error) {
-      console.error("Failed to generate topic:", error);
-      setError("Could not generate a topic right now.");
-    } finally {
-      setIsGeneratingTopic(false);
-    }
-  };
-  const handleCopyPassword = async () => {
-    try {
-      await navigator.clipboard.writeText(password);
+      await navigator.clipboard.writeText(formData.password);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (error) {
@@ -83,11 +86,8 @@ function ClassroomSetup({ onClassroomCreated, onBack }) {
       setError('Please enter your name');
       return false;
     }
-    if (!formData.topic.trim()) {
-      setError('Please enter a debate topic');
-      return false;
-    }
-    if (!password) {
+  
+    if (!formData.password) { 
       setError('Please generate a session password');
       return false;
     }
@@ -96,15 +96,10 @@ function ClassroomSetup({ onClassroomCreated, onBack }) {
 
   const handleCreateClassroom = async () => {
     if (!validateForm()) return;
-
     setIsCreating(true);
-    setError('');
-
     try {
-      await onClassroomCreated({
-        ...formData,
-        password: password,
-      });
+      // Pass the entire formData object, which now includes the unique password
+      await onClassroomCreated(formData);
     } catch (error) {
       setError('Failed to create classroom. Please try again.');
       console.error('Classroom creation error:', error);
@@ -168,44 +163,6 @@ function ClassroomSetup({ onClassroomCreated, onBack }) {
             />
           </div>
 
-          <div className="form-group">
-          <label htmlFor="topic">Initial Debate Topic *</label>
-          
-          {/* 👇 Wrap your textarea and the new button in this div 👇 */}
-          <div className="input-with-button">
-            <textarea
-              id="topic"
-              name="topic"
-              className="classroom-input topic-input" // Your existing classes
-              value={formData.topic}
-              onChange={handleInputChange}
-              placeholder="Enter an engaging debate topic..."
-              rows={3}
-              required
-            />
-            
-            {/* 👇 Add the new button here 👇 */}
-            <button type="button" className="generate-btn" onClick={handleGenerateTopic} disabled={isGeneratingTopic}>
-              {isGeneratingTopic ? (
-                <>
-                  <div className="loading-spinner small"></div>
-                  Generating...
-                </>
-              ) : (
-                <>
-                  <RefreshCw size={16} />
-                  ✨ Generate Topic
-                </>
-              )}
-             
-            </button>
-            <div className="team-info">
-                <p className="team-description">
-                Please Be Patient with the "Generate" Buttons ⏳
-                </p>
-              </div>
-          </div>
-        </div>
         </div>
 
         <div className="form-section">
@@ -239,9 +196,9 @@ function ClassroomSetup({ onClassroomCreated, onBack }) {
                 </p>
               </div>
               
-              {showPassword && password && (
+              {showPassword && formData.password &&  (
                 <div className="generated-password">
-                  <span className="password-text">{password}</span>
+                  <span className="password-text">{formData.password}</span>
                   <button 
                     type="button"
                     className="copy-btn" 
@@ -275,7 +232,7 @@ function ClassroomSetup({ onClassroomCreated, onBack }) {
         <button
           className="create-classroom-btn"
           onClick={handleCreateClassroom}
-          disabled={isCreating || !password || !formData.name.trim() || !formData.adminName.trim()}
+          disabled={isCreating || !formData.password || !formData.name.trim() || !formData.adminName.trim()}
         >
           {isCreating ? (
             <>

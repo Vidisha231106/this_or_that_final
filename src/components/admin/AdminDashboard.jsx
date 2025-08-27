@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Plus, Settings, Users, Play, RotateCcw, Eye, EyeOff, Trash2 } from 'lucide-react';
 import { useDebate } from '../../context/DebateContext';
 import TimerDisplay from '../spectator/TimerDisplay';
@@ -47,6 +47,8 @@ function AdminDashboard() {
   const [activeGame, setActiveGame] = useState(null);
   const [rejoinPassword, setRejoinPassword] = useState('');
   const [isDataLoading, setIsDataLoading] = useState(true);
+  const [clickCount, setClickCount] = useState(0);
+  const clickTimer = useRef(null);
 
 
   useEffect(() => {
@@ -266,22 +268,42 @@ function AdminDashboard() {
     }
   };
   const handleGenerateTopic = async () => {
-    // Ensure a game is selected before generating a topic for it
+    clearTimeout(clickTimer.current);
+
+    const newClickCount = clickCount + 1;
+    setClickCount(newClickCount);
+  
+    clickTimer.current = setTimeout(() => {
+      setClickCount(0);
+    }, 10000); 
+  
+    if (newClickCount > 3) {
+      setError("⚠️ You're clicking too fast! Please wait a moment to avoid being rate-limited.");
+      return; 
+    }
     if (!activeGameId) {
       alert("Please select a game before generating a topic.");
       return;
     }
 
     setIsGeneratingTopic(true);
+    setError('');
+
     try {
       const topic = await generateDebateTopic();
-      // Set the generated topic into the input field, ready to be saved
       setNewTopic(topic);
     } catch (error) {
       console.error("Failed to generate topic:", error);
-      actions.setError("Could not generate a topic right now.");
+      if (error.message.includes('429')) {
+        actions.setError("Rate limit reached. Please wait a minute and try again.");
+      } else {
+        actions.setError("Could not generate a topic right now.");
+      }
     } finally {
-      setIsGeneratingTopic(false);
+      // Keep the button disabled for a 3-second cooldown to prevent spamming
+      setTimeout(() => {
+        setIsGeneratingTopic(false);
+      }, 3000);
     }
   };
   const handleDeleteGame = async (gameId) => {

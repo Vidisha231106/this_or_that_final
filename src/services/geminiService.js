@@ -5,67 +5,24 @@ import {createGame} from './debateService';
 // Use environment variable or fallback to your key
 const GEMINI_API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY || 'AIzaSyCT33ONf8J1povWiKDGSigwPkg4lQr8ao8';// Fixed API URL - use the correct endpoint
 const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_API_KEY}`;
-
-// Generate a debate-themed password using Gemini AI
+const predefinedPasswords = [
+  'logic101', 'rhetoric202', 'argument303', 'reason404', 'debate505',
+  'clarity111', 'proof212', 'rebuttal313', 'ethos414', 'logos515',
+  'pathos616', 'facts717', 'topic818', 'motion919', 'verdict121',
+  'case232', 'point343', 'speaker454', 'panel565', 'forum676',
+  'inquiry787', 'thesis898', 'axiom909', 'voice112', 'speech223',
+  'dialogue334', 'discourse445', 'persuade556', 'evidence667', 'theory778',
+  'analysis889', 'critical990', 'insight123', 'concept234', 'idea345',
+  'query456', 'forum789', 'panel101', 'motion210', 'case321',
+  'logic432', 'reason543', 'facts654', 'proof765', 'topic876',
+  'ethos987', 'logos135', 'pathos246', 'clarity357', 'rebuttal468'
+];
 export const generateDebatePassword = async () => {
-  try {
-    const prompt = `Generate a unique, memorable password for a classroom debate session. 
-    Requirements:
-    - Combine one random, simple English word with 2-3 random numbers.
-    - The word should be related to debating, learning, or ideas.
-    - Total length should be 8-12 characters.
-    - Easy to remember and type.
-    - No special characters.
-    
-    Examples: "logic481", "reason92", "idea583"
-    
-    Return only the password, nothing else.`;
-    const response = await fetch(GEMINI_API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        contents: [{
-          parts: [{
-            text: prompt
-          }]
-        }],
-        generationConfig: {
-          temperature: 0.7,
-          topK: 1,
-          topP: 1,
-          maxOutputTokens: 50,
-        },
-      })
-    });
-
-    if (!response.ok) {
-      console.error('Gemini API Response:', response.status, response.statusText);
-      throw new Error(`Gemini API error: ${response.status}`);
-    }
-
-    const data = await response.json();
-    const generatedPassword = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
-    
-    // Fallback if API fails or returns unexpected format
-    if (!generatedPassword || generatedPassword.length < 6) {
-      console.warn('Gemini returned invalid password, using fallback');
-      return generateFallbackPassword();
-    }
-
-    // Clean up the password (remove quotes, newlines, etc.)
-    const cleanPassword = generatedPassword.replace(/['"]/g, '').replace(/\s+/g, '');
-    
-    return cleanPassword || generateFallbackPassword();
-  } catch (error) {
-    console.error('Error generating password with Gemini:', error);
-    // Fallback to local generation if API fails
-    return generateFallbackPassword();
-  }
+  // This function now just picks a random password from your list.
+  const randomIndex = Math.floor(Math.random() * predefinedPasswords.length);
+  return predefinedPasswords[randomIndex];
 };
 
-// Fallback password generation if Gemini API fails
 const generateFallbackPassword = () => {
   const debateWords = [
     'rhetoric', 'eloquence', 'debate', 'argument', 'logic', 'reason',
@@ -96,57 +53,6 @@ export const createRoomWithGemini = async () => {
 export const validatePassword = (password) => {
   return password && password.length >= 6 && password.length <= 20;
 };
-
-// Create a new classroom with password
-export const createClassroom = async (classroomData) => {
-  try {
-    let password;
-    let isUnique = false;
-    let attempts = 0;
-
-    // This loop will continue until a unique password is found
-    while (!isUnique && attempts < 10) { // We'll add a safety limit of 10 tries
-      password = await generateDebatePassword();
-      const existingClassroom = await getClassroomByPassword(password);
-      if (!existingClassroom) {
-        // If no classroom is found with this password, it's unique!
-        isUnique = true;
-      }
-      attempts++;
-    }
-
-    if (!isUnique) {
-      // If we still couldn't find a unique password after 10 tries, use a fallback
-      throw new Error('Failed to generate a unique password after multiple attempts.');
-    }
-
-    // --- The rest of the function continues as before ---
-    const classroomRef = doc(collection(db, 'classrooms'));
-    const classroom = {
-      id: classroomRef.id,
-      name: classroomData.name || 'Debate Classroom',
-      password, // Use the guaranteed unique password
-      adminName: classroomData.adminName || 'Teacher',
-      createdAt: new Date().toISOString(),
-      isActive: true,
-    };
-    
-    await setDoc(classroomRef, classroom);
-    if (classroomData.topic) {
-      await createGame(classroom.id, {
-        gameName: "Game 1",
-        topic: classroomData.topic,
-      });
-    }
-    
-    return classroom;
-
-  } catch (error) {
-    console.error('Error creating classroom:', error);
-    throw error; // Re-throw the error to be handled by the component
-  }
-};
-// Get classroom by password
 export const getClassroomByPassword = async (password) => {
   try {
     const q = query(collection(db, 'classrooms'), where('password', '==', password));
@@ -163,6 +69,44 @@ export const getClassroomByPassword = async (password) => {
     throw error;
   }
 };
+
+// Create a new classroom with password
+export const createClassroom = async (classroomData) => {
+  try {
+    // The password is now expected to be in classroomData from the component.
+    // We no longer generate a new one here.
+    if (!classroomData.password) {
+      throw new Error('Password is required to create a classroom.');
+    }
+
+    const classroomRef = doc(collection(db, 'classrooms'));
+    const classroom = {
+      id: classroomRef.id,
+      name: classroomData.name || 'Debate Classroom',
+      password: classroomData.password, // Use the password from the input data
+      adminName: classroomData.adminName || 'Teacher',
+      createdAt: new Date().toISOString(),
+      isActive: true,
+    };
+
+    await setDoc(classroomRef, classroom);
+
+    // This part remains the same
+    if (classroomData.topic) {
+      await createGame(classroom.id, {
+        gameName: "Game 1",
+        topic: classroomData.topic,
+      });
+    }
+
+    return classroom;
+
+  } catch (error) {
+    console.error('Error creating classroom:', error);
+    throw error;
+  }
+};
+// Get classroom by password
 
 // Get classroom by ID
 export const getClassroomById = async (classroomId) => {
