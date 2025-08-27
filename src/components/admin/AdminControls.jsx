@@ -26,7 +26,6 @@ function AdminDashboard() {
   const [activeClassroom, setActiveClassroom] = useState(null);
   const [newTopic, setNewTopic] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [students, setStudents] = useState([]);
   const [loadingError, setLoadingError] = useState('');
 
   // Load saved classroom on mount
@@ -215,6 +214,8 @@ function AdminDashboard() {
     }
   };
 
+  const totalStudents = (state.teamA?.length || 0) + (state.teamB?.length || 0);
+
   if (state.isLoading) {
     return (
       <div className="admin-dashboard">
@@ -324,14 +325,14 @@ function AdminDashboard() {
           <div className="team-info">
             <p className="team-description">
               Students are automatically assigned to balanced teams when they register. 
-              Total students: <strong>{students.length}</strong>
+              Total students: <strong>{totalStudents}</strong>
             </p>
           </div>
 
           {/* Teams Display */}
           <div className="teams-display">
             <div className="team-section">
-              <h4>Team A ({state.teamA?.length || 0} students)</h4>
+              <h4>Team A ({state.teamA?.length || 0} totalStudents)</h4>
               <ul className="team-list">
                 {state.teamA && state.teamA.length > 0 ? (
                   state.teamA.map((student, index) => (
@@ -363,7 +364,7 @@ function AdminDashboard() {
             </div>
 
             <div className="team-section">
-              <h4>Team B ({state.teamB?.length || 0} students)</h4>
+              <h4>Team B ({state.teamB?.length || 0} totalStudents)</h4>
               <ul className="team-list">
                 {state.teamB && state.teamB.length > 0 ? (
                   state.teamB.map((student, index) => (
@@ -395,7 +396,7 @@ function AdminDashboard() {
             </div>
           </div>
 
-          {students.length > 0 && (
+          {totalStudents.length > 0 && (
             <div className="team-actions">
               <div className="balance-info">
                 <span>Team Balance: </span>
