@@ -556,7 +556,7 @@ function AdminDashboard() {
               <div className="team-info">
                 <p className="team-description">
                   Students are automatically assigned to balanced teams when they register.
-                  Total students: <strong>{students.length}</strong>
+                  Total students: <strong>{state.teamA.length + state.teamB.length}</strong>
                 </p>
               </div>
 

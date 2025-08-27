@@ -11,7 +11,8 @@ import {
   query,
   where,
   getDocs,
-  deleteDoc
+  deleteDoc,
+  runTransaction
 } from 'firebase/firestore';
 
 // Helper function to handle Firebase errors
@@ -74,99 +75,90 @@ export const subscribeToTeams = (classroomId, callback) => {
 };
 
 // Register a new student and automatically assign to a team
+// services/debateService.js
+
 export const registerStudent = async (classroomId, studentData) => {
   try {
     const { name, admissionNumber } = studentData;
-    
     if (!classroomId) {
       throw new Error('Classroom ID is required');
     }
-    
-    // Get current teams data
+
     const teamsRef = doc(db, 'teams', classroomId);
-    const teamsSnap = await getDoc(teamsRef);
-    
-    let currentTeams = { teamA: [], teamB: [] };
-    if (teamsSnap.exists()) {
-      currentTeams = teamsSnap.data();
-    }
-    
-    // Ensure teams arrays exist
-    if (!Array.isArray(currentTeams.teamA)) currentTeams.teamA = [];
-    if (!Array.isArray(currentTeams.teamB)) currentTeams.teamB = [];
-    
-    // Check for duplicate admission numbers
-    const allStudents = [...currentTeams.teamA, ...currentTeams.teamB];
-    const existingStudent = allStudents.find(student => 
-      student.admissionNumber?.toLowerCase() === admissionNumber.toLowerCase()
-    );
-    
-    if (existingStudent) {
-      throw new Error('Student with this admission number is already registered');
-    }
-    
-    // Check for duplicate names (case-insensitive)
-    const existingName = allStudents.find(student => 
-      student.name?.toLowerCase() === name.toLowerCase()
-    );
-    
-    if (existingName) {
-      throw new Error('A student with this name is already registered');
-    }
-    
-    // Create student object
-    const student = {
-      name,
-      admissionNumber,
-      joinedAt: new Date().toISOString()
-    };
-    
-    // Determine which team to assign to (alternate for balance)
-    const teamACount = currentTeams.teamA.length;
-    const teamBCount = currentTeams.teamB.length;
-    
-    let assignedTeam;
-    let teamPosition;
-    
-    if (teamACount <= teamBCount) {
-      // Assign to Team A
-      assignedTeam = 'A';
-      currentTeams.teamA.push(student);
-      teamPosition = currentTeams.teamA.length;
-    } else {
-      // Assign to Team B
-      assignedTeam = 'B';
-      currentTeams.teamB.push(student);
-      teamPosition = currentTeams.teamB.length;
-    }
-    
-    // Update teams in database
-    await setDoc(teamsRef, {
-      ...currentTeams,
-      lastUpdated: new Date().toISOString()
-    }, { merge: true });
-    
-    // Also update the students collection for easy querying
-    const studentsRef = doc(db, 'students', `${classroomId}_${admissionNumber}`);
-    await setDoc(studentsRef, {
-      ...student,
-      classroomId,
-      assignedTeam,
-      teamPosition
+    const studentDocRef = doc(db, 'students', `${classroomId}_${admissionNumber}`);
+
+    // runTransaction will handle retries automatically if the data changes
+    const result = await runTransaction(db, async (transaction) => {
+      const teamsSnap = await transaction.get(teamsRef);
+
+      let currentTeams = { teamA: [], teamB: [] };
+      if (teamsSnap.exists()) {
+        currentTeams = teamsSnap.data();
+      }
+
+      // Ensure teams arrays exist
+      if (!Array.isArray(currentTeams.teamA)) currentTeams.teamA = [];
+      if (!Array.isArray(currentTeams.teamB)) currentTeams.teamB = [];
+
+      const allStudents = [...currentTeams.teamA, ...currentTeams.teamB];
+
+      // Check for duplicate admission number
+      if (allStudents.some(s => s.admissionNumber?.toLowerCase() === admissionNumber.toLowerCase())) {
+        throw new Error('Student with this admission number is already registered');
+      }
+
+      // Check for duplicate name
+      if (allStudents.some(s => s.name?.toLowerCase() === name.toLowerCase())) {
+        throw new Error('A student with this name is already registered');
+      }
+
+      const student = {
+        name,
+        admissionNumber,
+        joinedAt: new Date().toISOString()
+      };
+
+      let assignedTeam;
+      let teamPosition;
+
+      if (currentTeams.teamA.length <= currentTeams.teamB.length) {
+        assignedTeam = 'A';
+        currentTeams.teamA.push(student);
+        teamPosition = currentTeams.teamA.length;
+      } else {
+        assignedTeam = 'B';
+        currentTeams.teamB.push(student);
+        teamPosition = currentTeams.teamB.length;
+      }
+
+      // Queue up the writes within the transaction
+      transaction.set(teamsRef, {
+        ...currentTeams,
+        lastUpdated: new Date().toISOString()
+      }, { merge: true });
+
+      transaction.set(studentDocRef, {
+        ...student,
+        classroomId,
+        assignedTeam,
+        teamPosition
+      });
+
+      return {
+        success: true,
+        assignedTeam,
+        teamPosition,
+        totalStudents: allStudents.length + 1
+      };
     });
-    
-    return {
-      success: true,
-      assignedTeam,
-      teamPosition,
-      totalStudents: teamACount + teamBCount + 1
-    };
-    
+
+    return result;
+
   } catch (error) {
+    // This will now correctly catch errors from inside the transaction
     handleFirebaseError(error, 'registerStudent');
   }
 };
-
 // Get student by admission number and classroom
 export const getStudent = async (classroomId, admissionNumber) => {
   try {
