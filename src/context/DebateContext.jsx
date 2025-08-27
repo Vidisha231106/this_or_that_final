@@ -18,8 +18,10 @@ const initialState = {
   currentClassroom: null,
   isLoading: true,
   error: null,
-  timer: 0,
-  isTimerRunning: false,
+  // Support multiple timers for different rooms
+  timers: {}, // { [roomId]: { time: 60, isRunning: false } }
+  timer: 0, // Deprecated - kept for backward compatibility
+  isTimerRunning: false, // Deprecated - kept for backward compatibility
   activePlayers: { teamA: [], teamB: [] },
   activeGameId: null,
 };
@@ -32,6 +34,8 @@ const ACTIONS = {
   SET_CLASSROOM: 'SET_CLASSROOM',
   SET_DEBATE_STARTED: 'SET_DEBATE_STARTED',
   UPDATE_DEBATE_DATA: 'UPDATE_DEBATE_DATA',
+  UPDATE_ROOM_TIMER: 'UPDATE_ROOM_TIMER',
+  RESET_ROOM_TIMER: 'RESET_ROOM_TIMER',
   RESET_STATE: 'RESET_STATE'
 };
 
@@ -55,6 +59,28 @@ function debateReducer(state, action) {
       };
     case ACTIONS.UPDATE_DEBATE_DATA:
       return { ...state, ...action.payload };
+    case ACTIONS.UPDATE_ROOM_TIMER:
+      return {
+        ...state,
+        timers: {
+          ...state.timers,
+          [action.payload.roomId]: {
+            time: action.payload.time,
+            isRunning: action.payload.isRunning
+          }
+        }
+      };
+    case ACTIONS.RESET_ROOM_TIMER:
+      return {
+        ...state,
+        timers: {
+          ...state.timers,
+          [action.payload.roomId]: {
+            time: action.payload.initialTime || 60,
+            isRunning: false
+          }
+        }
+      };
     case ACTIONS.RESET_STATE:
       return { ...initialState, isLoading: false };
     default:
@@ -124,6 +150,14 @@ export function DebateProvider({ children }) {
     setError: (error) => dispatch({ type: ACTIONS.SET_ERROR, payload: error }),
     setClassroom: (classroom) => dispatch({ type: ACTIONS.SET_CLASSROOM, payload: classroom }),
     setTeams: (teams) => dispatch({ type: ACTIONS.SET_TEAMS, payload: teams }),
+    updateRoomTimer: (roomId, time, isRunning) => dispatch({ 
+      type: ACTIONS.UPDATE_ROOM_TIMER, 
+      payload: { roomId, time, isRunning } 
+    }),
+    resetRoomTimer: (roomId, initialTime = 60) => dispatch({ 
+      type: ACTIONS.RESET_ROOM_TIMER, 
+      payload: { roomId, initialTime } 
+    }),
     resetState: () => dispatch({ type: ACTIONS.RESET_STATE })
   };
 

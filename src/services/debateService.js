@@ -524,6 +524,54 @@ export const updateTimerInGame = async (classroomId, gameId, newTime, isRunning)
     handleFirebaseError(error, 'updateTimerInGame');
   }
 };
+
+// Support for room-specific timers
+export const updateRoomTimer = async (classroomId, roomId, newTime, isRunning) => {
+  try {
+    if (!classroomId || !roomId) {
+      throw new Error('Classroom ID and Room ID are required');
+    }
+    
+    const roomTimerDocRef = doc(db, 'classrooms', classroomId, 'roomTimers', roomId);
+    
+    await updateDoc(roomTimerDocRef, {
+      time: newTime,
+      isRunning: isRunning,
+      lastUpdated: new Date().toISOString()
+    });
+    return true;
+  } catch (error) {
+    handleFirebaseError(error, 'updateRoomTimer');
+  }
+};
+
+// Subscribe to room timer updates
+export const subscribeToRoomTimer = (classroomId, roomId, callback) => {
+  try {
+    if (!classroomId || !roomId) {
+      throw new Error('Classroom ID and Room ID are required');
+    }
+    
+    const roomTimerDocRef = doc(db, 'classrooms', classroomId, 'roomTimers', roomId);
+    
+    return onSnapshot(roomTimerDocRef, (doc) => {
+      if (doc.exists()) {
+        callback(doc.data());
+      } else {
+        // Initialize room timer if it doesn't exist
+        const initialData = { time: 60, isRunning: false, lastUpdated: new Date().toISOString() };
+        setDoc(roomTimerDocRef, initialData);
+        callback(initialData);
+      }
+    }, (error) => {
+      handleFirebaseError(error, 'subscribeToRoomTimer');
+      callback(null);
+    });
+  } catch (error) {
+    handleFirebaseError(error, 'subscribeToRoomTimer');
+    return () => {};
+  }
+};
 export const createGame = async (classroomId, gameData) => {
   try {
     if (!classroomId || !gameData) {
