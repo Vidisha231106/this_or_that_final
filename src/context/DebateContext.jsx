@@ -1,8 +1,8 @@
 "use client";
-import React, { createContext, useContext, useReducer, useEffect } from 'react';
-import { doc, onSnapshot } from 'firebase/firestore';
-import { db } from '@/services/firebase';
-import { subscribeToTeams, subscribeToGame } from '@/services/debateService';
+import React, { createContext, useContext, useReducer, useEffect } from "react";
+import { doc, onSnapshot } from "firebase/firestore";
+import { db } from "@/services/firebase";
+import { subscribeToTeams, subscribeToGame } from "@/services/debateService";
 
 const DebateContext = createContext();
 
@@ -10,16 +10,16 @@ const DebateContext = createContext();
 const initialState = {
   topic: "Waiting for topic...",
   votes: { switch: 0, dontSwitch: 0 },
-  speakingFor: 'A',
-  teamAStance: 'Pro',
+  speakingFor: "A",
+  teamAStance: "Pro",
   teamA: [], // Master roster
   teamB: [], // Master roster
   debateStarted: false,
   currentClassroom: null,
   isLoading: true,
   error: null,
-  // Support multiple timers for different rooms
-  timers: {}, // { [roomId]: { time: 60, isRunning: false } }
+  // Support multiple timers for different breakrooms
+  timers: {}, // { [breakroomId]: { time: 60, isRunning: false } }
   timer: 0, // Deprecated - kept for backward compatibility
   isTimerRunning: false, // Deprecated - kept for backward compatibility
   activePlayers: { teamA: [], teamB: [] },
@@ -28,15 +28,15 @@ const initialState = {
 
 // All possible actions
 const ACTIONS = {
-  SET_LOADING: 'SET_LOADING',
-  SET_ERROR: 'SET_ERROR',
-  SET_TEAMS: 'SET_TEAMS',
-  SET_CLASSROOM: 'SET_CLASSROOM',
-  SET_DEBATE_STARTED: 'SET_DEBATE_STARTED',
-  UPDATE_DEBATE_DATA: 'UPDATE_DEBATE_DATA',
-  UPDATE_ROOM_TIMER: 'UPDATE_ROOM_TIMER',
-  RESET_ROOM_TIMER: 'RESET_ROOM_TIMER',
-  RESET_STATE: 'RESET_STATE'
+  SET_LOADING: "SET_LOADING",
+  SET_ERROR: "SET_ERROR",
+  SET_TEAMS: "SET_TEAMS",
+  SET_CLASSROOM: "SET_CLASSROOM",
+  SET_DEBATE_STARTED: "SET_DEBATE_STARTED",
+  UPDATE_DEBATE_DATA: "UPDATE_DEBATE_DATA",
+  UPDATE_BREAKROOM_TIMER: "UPDATE_BREAKROOM_TIMER",
+  RESET_BREAKROOM_TIMER: "RESET_BREAKROOM_TIMER",
+  RESET_STATE: "RESET_STATE",
 };
 
 // The reducer function to handle state changes
@@ -59,27 +59,27 @@ function debateReducer(state, action) {
       };
     case ACTIONS.UPDATE_DEBATE_DATA:
       return { ...state, ...action.payload };
-    case ACTIONS.UPDATE_ROOM_TIMER:
+    case ACTIONS.UPDATE_BREAKROOM_TIMER:
       return {
         ...state,
         timers: {
           ...state.timers,
-          [action.payload.roomId]: {
+          [action.payload.breakroomId]: {
             time: action.payload.time,
-            isRunning: action.payload.isRunning
-          }
-        }
+            isRunning: action.payload.isRunning,
+          },
+        },
       };
-    case ACTIONS.RESET_ROOM_TIMER:
+    case ACTIONS.RESET_BREAKROOM_TIMER:
       return {
         ...state,
         timers: {
           ...state.timers,
-          [action.payload.roomId]: {
+          [action.payload.breakroomId]: {
             time: action.payload.initialTime || 60,
-            isRunning: false
-          }
-        }
+            isRunning: false,
+          },
+        },
       };
     case ACTIONS.RESET_STATE:
       return { ...initialState, isLoading: false };
@@ -101,42 +101,52 @@ export function DebateProvider({ children }) {
 
     let unsubscribeGame = () => {};
 
-    const unsubscribeClassroom = onSnapshot(doc(db, 'classrooms', state.currentClassroom.id), (classroomDoc) => {
-      const liveGameId = classroomDoc.data()?.activeGameId;
-      unsubscribeGame(); // Unsubscribe from any previous game listener
+    const unsubscribeClassroom = onSnapshot(
+      doc(db, "classrooms", state.currentClassroom.id),
+      (classroomDoc) => {
+        const liveGameId = classroomDoc.data()?.activeGameId;
+        unsubscribeGame(); // Unsubscribe from any previous game listener
 
-      if (liveGameId) {
-        unsubscribeGame = subscribeToGame(state.currentClassroom.id, liveGameId, (liveGame) => {
-          if (liveGame) {
-            dispatch({
-              type: ACTIONS.UPDATE_DEBATE_DATA,
-              payload: {
-                activeGameId: liveGame.id,
-                topic: liveGame.topic,
-                votes: liveGame.votes,
-                speakingFor: liveGame.speakingFor,
-                teamAStance: liveGame.teamAStance,
-                debateStarted: true,
-                timer: liveGame.timer,
-                isTimerRunning: liveGame.isTimerRunning,
-                activePlayers: {
-                  teamA: liveGame.teamAPlayers,
-                  teamB: liveGame.teamBPlayers,
-                }
+        if (liveGameId) {
+          unsubscribeGame = subscribeToGame(
+            state.currentClassroom.id,
+            liveGameId,
+            (liveGame) => {
+              if (liveGame) {
+                dispatch({
+                  type: ACTIONS.UPDATE_DEBATE_DATA,
+                  payload: {
+                    activeGameId: liveGame.id,
+                    topic: liveGame.topic,
+                    votes: liveGame.votes,
+                    speakingFor: liveGame.speakingFor,
+                    teamAStance: liveGame.teamAStance,
+                    debateStarted: true,
+                    timer: liveGame.timer,
+                    isTimerRunning: liveGame.isTimerRunning,
+                    activePlayers: {
+                      teamA: liveGame.teamAPlayers,
+                      teamB: liveGame.teamBPlayers,
+                    },
+                  },
+                });
               }
-            });
-          }
-        });
-      } else {
-        dispatch({ type: ACTIONS.SET_DEBATE_STARTED, payload: false });
+            }
+          );
+        } else {
+          dispatch({ type: ACTIONS.SET_DEBATE_STARTED, payload: false });
+        }
       }
-    });
+    );
 
-    const unsubscribeTeams = subscribeToTeams(state.currentClassroom.id, (teamsData) => {
-      if (teamsData) {
-        dispatch({ type: ACTIONS.SET_TEAMS, payload: teamsData });
+    const unsubscribeTeams = subscribeToTeams(
+      state.currentClassroom.id,
+      (teamsData) => {
+        if (teamsData) {
+          dispatch({ type: ACTIONS.SET_TEAMS, payload: teamsData });
+        }
       }
-    });
+    );
 
     return () => {
       unsubscribeClassroom();
@@ -146,27 +156,29 @@ export function DebateProvider({ children }) {
   }, [state.currentClassroom?.id]);
 
   const actions = {
-    setLoading: (loading) => dispatch({ type: ACTIONS.SET_LOADING, payload: loading }),
+    setLoading: (loading) =>
+      dispatch({ type: ACTIONS.SET_LOADING, payload: loading }),
     setError: (error) => dispatch({ type: ACTIONS.SET_ERROR, payload: error }),
-    setClassroom: (classroom) => dispatch({ type: ACTIONS.SET_CLASSROOM, payload: classroom }),
+    setClassroom: (classroom) =>
+      dispatch({ type: ACTIONS.SET_CLASSROOM, payload: classroom }),
     setTeams: (teams) => dispatch({ type: ACTIONS.SET_TEAMS, payload: teams }),
-    updateRoomTimer: (roomId, time, isRunning) => dispatch({ 
-      type: ACTIONS.UPDATE_ROOM_TIMER, 
-      payload: { roomId, time, isRunning } 
-    }),
-    resetRoomTimer: (roomId, initialTime = 60) => dispatch({ 
-      type: ACTIONS.RESET_ROOM_TIMER, 
-      payload: { roomId, initialTime } 
-    }),
-    resetState: () => dispatch({ type: ACTIONS.RESET_STATE })
+    updateBreakroomTimer: (breakroomId, time, isRunning) =>
+      dispatch({
+        type: ACTIONS.UPDATE_BREAKROOM_TIMER,
+        payload: { breakroomId, time, isRunning },
+      }),
+    resetBreakroomTimer: (breakroomId, initialTime = 60) =>
+      dispatch({
+        type: ACTIONS.RESET_BREAKROOM_TIMER,
+        payload: { breakroomId, initialTime },
+      }),
+    resetState: () => dispatch({ type: ACTIONS.RESET_STATE }),
   };
 
   const value = { state, actions };
 
   return (
-    <DebateContext.Provider value={value}>
-      {children}
-    </DebateContext.Provider>
+    <DebateContext.Provider value={value}>{children}</DebateContext.Provider>
   );
 }
 
@@ -174,7 +186,7 @@ export function DebateProvider({ children }) {
 export function useDebate() {
   const context = useContext(DebateContext);
   if (!context) {
-    throw new Error('useDebate must be used within a DebateProvider');
+    throw new Error("useDebate must be used within a DebateProvider");
   }
   return context;
 }

@@ -525,50 +525,50 @@ export const updateTimerInGame = async (classroomId, gameId, newTime, isRunning)
   }
 };
 
-// Support for room-specific timers
-export const updateRoomTimer = async (classroomId, roomId, newTime, isRunning) => {
+// Support for breakroom-specific timers
+export const updateBreakroomTimer = async (classroomId, breakroomId, newTime, isRunning) => {
   try {
-    if (!classroomId || !roomId) {
-      throw new Error('Classroom ID and Room ID are required');
+    if (!classroomId || !breakroomId) {
+      throw new Error('Classroom ID and Breakroom ID are required');
     }
     
-    const roomTimerDocRef = doc(db, 'classrooms', classroomId, 'roomTimers', roomId);
+    const breakroomTimerDocRef = doc(db, 'classrooms', classroomId, 'breakroomTimers', breakroomId);
     
-    await updateDoc(roomTimerDocRef, {
+    await updateDoc(breakroomTimerDocRef, {
       time: newTime,
       isRunning: isRunning,
       lastUpdated: new Date().toISOString()
     });
     return true;
   } catch (error) {
-    handleFirebaseError(error, 'updateRoomTimer');
+    handleFirebaseError(error, 'updateBreakroomTimer');
   }
 };
 
-// Subscribe to room timer updates
-export const subscribeToRoomTimer = (classroomId, roomId, callback) => {
+// Subscribe to breakroom timer updates
+export const subscribeToBreakroomTimer = (classroomId, breakroomId, callback) => {
   try {
-    if (!classroomId || !roomId) {
-      throw new Error('Classroom ID and Room ID are required');
+    if (!classroomId || !breakroomId) {
+      throw new Error('Classroom ID and Breakroom ID are required');
     }
     
-    const roomTimerDocRef = doc(db, 'classrooms', classroomId, 'roomTimers', roomId);
+    const breakroomTimerDocRef = doc(db, 'classrooms', classroomId, 'breakroomTimers', breakroomId);
     
-    return onSnapshot(roomTimerDocRef, (doc) => {
+    return onSnapshot(breakroomTimerDocRef, (doc) => {
       if (doc.exists()) {
         callback(doc.data());
       } else {
-        // Initialize room timer if it doesn't exist
+        // Initialize breakroom timer if it doesn't exist
         const initialData = { time: 60, isRunning: false, lastUpdated: new Date().toISOString() };
-        setDoc(roomTimerDocRef, initialData);
+        setDoc(breakroomTimerDocRef, initialData);
         callback(initialData);
       }
     }, (error) => {
-      handleFirebaseError(error, 'subscribeToRoomTimer');
+      handleFirebaseError(error, 'subscribeToBreakroomTimer');
       callback(null);
     });
   } catch (error) {
-    handleFirebaseError(error, 'subscribeToRoomTimer');
+    handleFirebaseError(error, 'subscribeToBreakroomTimer');
     return () => {};
   }
 };
