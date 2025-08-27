@@ -2337,3 +2337,524 @@ button:disabled {
 .speaker-lists div {
   flex: 1;
 }
+
+/* Welcome card sizing */
+.welcome-card {
+  max-width: 600px; /* Increased width to accommodate larger buttons */
+  margin: 0 auto;
+  padding: 32px;
+}
+
+/* Action buttons container */
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 16px; /* Space between buttons */
+  margin-top: 24px;
+  width: 100%;
+}
+
+/* Equal sizing for both buttons */
+.action-buttons .btn-primary.large,
+.action-buttons .btn-secondary.large {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px; /* Space between icon and text */
+  padding: 16px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%; /* Full width of container */
+  min-height: 60px; /* Consistent height */
+  text-align: center;
+}
+
+/* Primary button styling */
+.btn-primary.large {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-primary.large:hover {
+  background-color: #0056b3;
+  transform: translateY(-1px);
+}
+
+/* Secondary button styling */
+.btn-secondary.large {
+  background-color: #6c757d;
+  color: white;
+}
+
+.btn-secondary.large:hover {
+  background-color: #545b62;
+  transform: translateY(-1px);
+}
+
+/* Ensure icons are visible and properly sized */
+.action-buttons svg {
+  flex-shrink: 0; /* Prevent icon from shrinking */
+  width: 20px;
+  height: 20px;
+}
+
+/* Responsive design for smaller screens */
+@media (min-width: 768px) {
+  .action-buttons {
+    flex-direction: row;
+    gap: 20px;
+  }
+  
+  .action-buttons .btn-primary.large,
+  .action-buttons .btn-secondary.large {
+    flex: 1; /* Equal width distribution */
+    min-width: 0; /* Allow flex shrinking */
+  }
+}
+
+
+/* Game items styling - dark theme */
+.game-item {
+  background-color: #2a2a2a;
+  color: white;
+  border: 1px solid #444;
+  padding: 12px 16px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.game-item:hover {
+  background-color: #333;
+  border-color: #555;
+}
+
+/* Active game item styling */
+.game-item.active {
+  background-color: #1e3a8a !important; /* Dark blue background */
+  border-color: #3b82f6 !important; /* Blue border */
+  color: white !important;
+}
+
+.game-item.active:hover {
+  background-color: #142252 !important; /* Slightly lighter blue on hover */
+}
+
+/* Game item text elements */
+.game-name {
+  font-weight: 600;
+  color: inherit;
+}
+
+.game-status {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.game-status.waiting {
+  background-color: #fbbf24;
+  color: #1f2937;
+}
+
+.game-status.live {
+  background-color: #10b981;
+  color: white;
+}
+
+.game-status.completed {
+  background-color: #6b7280;
+  color: white;
+}
+
+/* Topic management section - dark theme */
+.topic-management {
+  background-color: #2a2a2a;
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  color: white;
+}
+
+.topic-management strong {
+  color: white;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.topic-management form {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.topic-management .form-input {
+  background-color: #1a1a1a;
+  color: white;
+  border: 1px solid #555;
+  padding: 8px 12px;
+  border-radius: 4px;
+  flex: 1;
+  min-width: 200px;
+}
+
+.topic-management .form-input:focus {
+  outline: none;
+  border-color: #212f3d;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.topic-management .form-input::placeholder {
+  color: #aaa;
+}
+
+/* Team balance info section - dark theme */
+.team-actions {
+  background-color: #2a2a2a;
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.balance-info {
+  color: white;
+}
+
+.balance-info span:first-child {
+  font-weight: 600;
+  margin-right: 8px;
+}
+
+.balanced {
+  color: #10b981; /* Green for balanced */
+  font-weight: 600;
+}
+
+.unbalanced {
+  color: #ef4444; /* Red for unbalanced */
+  font-weight: 600;
+}
+
+/* Team info section - dark theme */
+.team-info {
+  background-color: #2a2a2a;
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.team-description {
+  color: white;
+  margin: 0;
+}
+
+/* Timer controls section - dark theme */
+.timer-controls {
+  background-color: #2a2a2a;
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 16px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.timer-input-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.timer-input-group label {
+  color: white;
+  font-weight: 500;
+}
+
+.timer-input-group input {
+  background-color: #1a1a1a;
+  color: white;
+  border: 1px solid #555;
+  padding: 6px 10px;
+  border-radius: 4px;
+  width: 80px;
+}
+
+.timer-input-group input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+/* Delete game button */
+.delete-game-btn {
+  background: none;
+  border: none;
+  color: #ef4444;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.delete-game-btn:hover {
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
+/* Dark theme input styling for topic management */
+.topic-management .form-input {
+  background-color: #1a1a1a !important; /* Dark background */
+  color: white !important; /* White text */
+  border: 1px solid #555 !important; /* Dark border */
+  padding: 12px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  width: 100%;
+  transition: all 0.2s ease;
+}
+
+/* Focus state - keeps dark background */
+.topic-management .form-input:focus {
+  background-color: #1a1a1a !important; /* Keep dark even on focus */
+  color: white !important; /* Keep white text */
+  border-color: #007bff !important; /* Blue border on focus */
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+/* Placeholder text styling */
+.topic-management .form-input::placeholder {
+  color: #aaa !important; /* Light gray placeholder */
+  opacity: 1;
+}
+
+/* Auto-filled/programmatically filled state */
+.topic-management .form-input:-webkit-autofill,
+.topic-management .form-input:-webkit-autofill:hover,
+.topic-management .form-input:-webkit-autofill:focus,
+.topic-management .form-input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px #1a1a1a inset !important;
+  -webkit-text-fill-color: white !important;
+  background-color: #1a1a1a !important;
+}
+
+/* Selection highlight - when text is selected */
+.topic-management .form-input::selection {
+  background-color: #007bff;
+  color: white;
+}
+
+/* Hover state */
+.topic-management .form-input:hover {
+  border-color: #666 !important;
+  background-color: #1a1a1a !important;
+}
+
+/* Disabled state (if needed) */
+.topic-management .form-input:disabled {
+  background-color: #2a2a2a !important;
+  color: #888 !important;
+  border-color: #444 !important;
+  cursor: not-allowed;
+}
+
+/* Ensure form layout works well */
+.topic-management form {
+  display: flex;
+  gap: 12px;
+  align-items: stretch;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+/* Make sure input takes appropriate space */
+.topic-management .form-input {
+  flex: 1;
+  min-width: 250px;
+}
+
+/* Buttons styling to match */
+.topic-management .btn {
+  padding: 12px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.topic-management .btn-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+.topic-management .btn-secondary:hover:not(:disabled) {
+  background-color: #5a6268;
+}
+
+.topic-management .btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.topic-management .btn-primary:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+.topic-management .btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+button {
+  background-color: #0a4079;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+button:active {
+  background-color: #004494;
+}
+
+/* Dark theme styles for admin dashboard */
+.admin-dashboard {
+  background-color: #1a1a1a;
+  min-height: 100vh;
+  color: #ffffff;
+}
+
+.rejoin-card.card {
+  background-color: #2d2d2d;
+  border: 1px solid #404040;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.rejoin-card h2 {
+  color: #ffffff;
+  margin-bottom: 8px;
+}
+
+.rejoin-card p {
+  color: #b3b3b3;
+  margin-bottom: 20px;
+}
+
+/* Dark input field styling */
+.form-input {
+  background-color: #1f1f1f;
+  border: 2px solid #404040;
+  border-radius: 6px;
+  padding: 12px 16px;
+  color: #0a0808;
+  font-size: 16px;
+  width: 100%;
+  margin-bottom: 20px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #0066cc;
+  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.2);
+}
+
+.form-input::placeholder {
+  color: #888888;
+}
+
+/* Error message styling */
+.error-message {
+  background-color: #4a1a1a;
+  border: 1px solid #cc3333;
+  border-radius: 4px;
+  padding: 12px;
+  color: #ff6666;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+/* Button styling */
+.action-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.btn-primary {
+  background-color: #0066cc;
+  border: none;
+  border-radius: 6px;
+  padding: 12px 24px;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: #0052a3;
+}
+
+.btn-primary:active {
+  background-color: #004080;
+}
+
+.btn-secondary {
+  background-color: transparent;
+  border: 2px solid #404040;
+  border-radius: 6px;
+  padding: 10px 24px;
+  color: #b3b3b3;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.3s ease, color 0.3s ease;
+}
+
+.btn-secondary:hover {
+  border-color: #666666;
+  color: #ffffff;
+}
+
+/* Form styling */
+form {
+  display: flex;
+  flex-direction: column;
+}

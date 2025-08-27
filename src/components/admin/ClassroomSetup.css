@@ -594,3 +594,58 @@
     color: #9ca3af;
   }
 }
+
+/* Dark styling for all form inputs */
+.classroom-input {
+  background-color: #2a2a2a; /* Dark background */
+  color: white; /* White text */
+  border: 1px solid #444; /* Dark border */
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+/* Ensure select dropdown has dark background */
+.classroom-input select,
+select.classroom-input {
+  background-color: #2a2a2a;
+  color: white;
+  border: 1px solid #444;
+}
+
+/* Style the dropdown options */
+.classroom-input option,
+select.classroom-input option {
+  background-color: #2a2a2a;
+  color: white;
+}
+
+/* Textarea specific styling */
+.topic-input {
+  background-color: #2a2a2a;
+  color: white;
+  border: 1px solid #444;
+  resize: vertical; /* Allow vertical resize only */
+}
+
+/* Focus states for better UX */
+.classroom-input:focus {
+  outline: none;
+  border-color: #007bff; /* Blue border on focus */
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+/* Placeholder text styling */
+.classroom-input::placeholder {
+  color: #aaa; /* Light gray placeholder text */
+}
+
+/* Ensure consistent styling across different input types */
+input.classroom-input,
+select.classroom-input,
+textarea.classroom-input {
+  background-color: #2a2a2a;
+  color: white;
+  border: 1px solid #444;
+}
+

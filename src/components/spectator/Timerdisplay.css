@@ -1,20 +1,7 @@
 .timer-display {
-    text-align: center;
-    padding: 20px;
-  }
-  .timer-display .time {
-    font-size: 3rem;
-    font-weight: bold;
-    margin: 10px 0;
-    font-family: monospace;
-  }
-  .timer-display .status.running {
-    color: #28a745; /* Green */
-  }
-  .timer-display .status.paused {
-    color: #dc3545; /* Red */
-  }
-  .timer-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     text-align: center;
     padding: 20px;
     border-radius: 12px;
@@ -27,6 +14,8 @@
     margin-top: 0;
     margin-bottom: 10px;
     color: #e0e0e0; /* Light text */
+    text-align: center;
+    width: 100%;
   }
   
   .timer-display .time {
@@ -35,6 +24,20 @@
     margin: 10px 0;
     font-family: monospace;
     color: #ffffff; /* White text */
+    text-align: center;
   }
   
-  /* ... existing status styles ... */
+  .timer-display .status.running {
+    color: #28a745; /* Green */
+  }
+  .timer-display .status.paused {
+    color: #dc3545; /* Red */
+  }
+  
+  /* Responsive: ensure center alignment on mobile */
+@media (max-width: 600px) {
+  .timer-display h3 {
+    text-align: center;
+    width: 100%;
+  }
+}

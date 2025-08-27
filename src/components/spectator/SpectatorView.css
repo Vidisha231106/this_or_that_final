@@ -1055,3 +1055,107 @@
     gap: 8px;
   }
 }
+
+.waiting-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  min-height: 300px; /* Adjust as needed */
+}
+
+.waiting-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px; /* Space between elements */
+  text-align: center;
+}
+
+.waiting-icon {
+  margin: 0 auto;
+}
+
+.waiting-content h3 {
+  margin: 0;
+  text-align: center;
+}
+
+.waiting-content p {
+  margin: 0;
+  text-align: center;
+}
+
+/* Dark theme styles for On the Floor card */
+.on-the-floor-card.card {
+  background-color: #2d2d2d;
+  border: 1px solid #404040;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.on-the-floor-card h3 {
+  color: #ffffff;
+  margin-bottom: 16px;
+  font-size: 1.2em;
+}
+
+.active-players-display {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.team-column {
+  background-color: #1f1f1f;
+  border: 1px solid #404040;
+  border-radius: 6px;
+  padding: 16px;
+  width: 100%;
+}
+
+.team-column h4 {
+  color: #ffffff;
+  margin-bottom: 12px;
+  font-size: 1em;
+  font-weight: 600;
+}
+
+.team-column ul {
+  background-color: #1a1a1a;
+  border: 1px solid #333333;
+  border-radius: 4px;
+  padding: 12px;
+  margin: 0;
+  list-style: none;
+  min-height: 40px;
+}
+
+.team-column ul li {
+  color: #110707;
+  padding: 4px 0;
+  font-size: 0.95em;
+}
+
+.team-column ul li:not(:last-child) {
+  border-bottom: 1px solid #333333;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+}
+
+/* Ensure no hover/click effects change the colors */
+.team-column ul:hover,
+.team-column ul:focus,
+.team-column ul:active {
+  background-color: #1a1a1a;
+  border-color: #333333;
+}
+
+.team-column:hover,
+.team-column:focus,
+.team-column:active {
+  background-color: #1f1f1f;
+  border-color: #404040;
+}
