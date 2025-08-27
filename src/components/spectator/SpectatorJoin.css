@@ -317,3 +317,175 @@
     transform: scale(1) translateY(0);
   }
 }
+
+
+/* Join Help Section Styling */
+.join-help {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.help-section {
+  margin-bottom: 32px;
+}
+
+.help-section h4 {
+  color: #ffffff;
+  font-size: 1.25em;
+  font-weight: 600;
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+/* How to Join Steps */
+.help-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.help-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  text-align: left;
+}
+
+.step-number {
+  background-color: #0066cc;
+  color: #ffffff;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.step-content {
+  flex: 1;
+}
+
+.step-content strong {
+  color: #ffffff;
+  font-size: 1.05em;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.step-content p {
+  color: #b3b3b3;
+  margin: 0;
+  font-size: 0.95em;
+  line-height: 1.4;
+}
+
+/* Feature List */
+.feature-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.feature-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+  color: #e0e0e0;
+  font-size: 0.95em;
+  line-height: 1.5;
+  text-align: left;
+}
+
+.feature-list li:before {
+  content: "✓";
+  color: #00cc66;
+  font-weight: bold;
+  font-size: 16px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.feature-list li:last-child {
+  margin-bottom: 0;
+}
+
+/* Mobile Responsive Design */
+@media (max-width: 768px) {
+  .join-help {
+    padding: 16px;
+  }
+  
+  .help-section {
+    margin-bottom: 28px;
+  }
+  
+  .help-section h4 {
+    font-size: 1.15em;
+    margin-bottom: 14px;
+  }
+  
+  .help-steps {
+    gap: 14px;
+  }
+  
+  .help-step {
+    gap: 12px;
+  }
+  
+  .step-number {
+    width: 24px;
+    height: 24px;
+    font-size: 13px;
+  }
+  
+  .step-content strong {
+    font-size: 1em;
+  }
+  
+  .step-content p {
+    font-size: 0.9em;
+  }
+  
+  .feature-list li {
+    gap: 10px;
+    margin-bottom: 10px;
+    font-size: 0.9em;
+  }
+  
+  .feature-list li:before {
+    font-size: 14px;
+  }
+}
+
+/* Extra small mobile screens */
+@media (max-width: 480px) {
+  .join-help {
+    padding: 12px;
+  }
+  
+  .help-section h4 {
+    font-size: 1.1em;
+  }
+  
+  .help-step {
+    gap: 10px;
+  }
+  
+  .step-number {
+    width: 22px;
+    height: 22px;
+    font-size: 12px;
+  }
+  
+  .feature-list li {
+    gap: 8px;
+    font-size: 0.85em;
+  }
+}
