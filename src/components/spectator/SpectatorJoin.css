@@ -27,8 +27,8 @@
   align-items: center;
   gap: 6px;
   background: transparent;
-  border: 1px solid var(--card-border);
-  color: var(--muted);
+  border: 1px solid #003366; /* changed from var(--card-border) */
+  color: #b0c4de; /* changed from var(--muted) */
   padding: 8px 12px;
   border-radius: 8px;
   font-size: 0.9rem;
@@ -36,9 +36,9 @@
 }
 
 .back-btn:hover {
-  background: rgba(59, 130, 246, 0.1);
-  border-color: #3b82f6;
-  color: #3b82f6;
+  background: #87cefa; /* changed from rgba(59, 130, 246, 0.1) */
+  border-color: #007bff; /* changed from #3b82f6 */
+  color: #007bff; /* changed from #3b82f6 */
 }
 
 .join-title {
@@ -51,10 +51,10 @@
   justify-content: center;
   width: 64px;
   height: 64px;
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(6, 182, 212, 0.1));
-  border: 1px solid rgba(59, 130, 246, 0.2);
+  background: linear-gradient(135deg, #87cefa, #add8e6); /* changed from rgba(59, 130, 246, 0.1), rgba(6, 182, 212, 0.1) */
+  border: 1px solid #b0c4de; /* changed from rgba(59, 130, 246, 0.2) */
   border-radius: 16px;
-  color: #3b82f6;
+  color: #007bff; /* changed from #3b82f6 */
   margin-bottom: 20px;
 }
 
@@ -146,22 +146,25 @@
 }
 
 .help-section h4 {
-  color: var(--text);
-  font-size: 1.1rem;
-  margin-bottom: 16px;
+  color: #ffffff;
+  font-size: 1.25em;
   font-weight: 600;
+  margin-bottom: 16px;
+  text-align: left;
 }
 
+/* How to Join Steps */
 .help-steps {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
 }
 
 .help-step {
   display: flex;
   align-items: flex-start;
   gap: 16px;
+  text-align: left;
 }
 
 .step-number {
@@ -170,7 +173,7 @@
   justify-content: center;
   width: 32px;
   height: 32px;
-  background: linear-gradient(135deg, #3b82f6, #06b6d4);
+  background: linear-gradient(135deg, #007bff, #00bfff); /* changed from #3b82f6, #06b6d4 */
   color: white;
   border-radius: 50%;
   font-weight: 700;
@@ -178,20 +181,25 @@
   flex-shrink: 0;
 }
 
+.step-content {
+  flex: 1;
+}
+
 .step-content strong {
-  color: var(--text);
+  color: #ffffff;
+  font-size: 1.05em;
   display: block;
   margin-bottom: 4px;
-  font-weight: 600;
 }
 
 .step-content p {
-  color: var(--muted);
+  color: #b3b3b3;
   margin: 0;
-  font-size: 0.9rem;
+  font-size: 0.95em;
   line-height: 1.4;
 }
 
+/* Feature List */
 .feature-list {
   list-style: none;
   padding: 0;
@@ -199,20 +207,27 @@
 }
 
 .feature-list li {
-  padding: 8px 0;
-  font-size: 0.9rem;
-  color: var(--muted);
-  position: relative;
-  padding-left: 24px;
-  line-height: 1.4;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+  color: #e0e0e0;
+  font-size: 0.95em;
+  line-height: 1.5;
+  text-align: left;
 }
 
-.feature-list li::before {
-  content: '✓';
-  position: absolute;
-  left: 0;
-  color: #3b82f6;
+.feature-list li:before {
+  content: "✓";
+  color: #00cc66;
   font-weight: bold;
+  font-size: 16px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.feature-list li:last-child {
+  margin-bottom: 0;
 }
 
 .error-message {

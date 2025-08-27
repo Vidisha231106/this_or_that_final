@@ -102,12 +102,12 @@
 }
 
 .team-badge.team-a {
-  background: linear-gradient(90deg, var(--accent-primary), #2563eb);
+  background: linear-gradient(90deg, #007bff, #1e90ff); /* changed from var(--accent-primary), #2563eb */
   color: white;
 }
 
 .team-badge.team-b {
-  background: linear-gradient(90deg, #7c3aed, #5b21b6);
+  background: linear-gradient(90deg, #4169e1, #003366); /* changed from #7c3aed, #5b21b6 */
   color: white;
 }
 
@@ -198,13 +198,13 @@
 }
 
 .member-badge {
-  background: linear-gradient(90deg, rgba(59, 130, 246, 0.2), rgba(6, 182, 212, 0.2));
-  color: var(--accent-primary);
+  background: linear-gradient(90deg, #87cefa33, #00ffff33); /* changed from rgba(59, 130, 246, 0.2), rgba(6, 182, 212, 0.2) */
+  color: #007bff; /* changed from var(--accent-primary) */
   padding: 6px 12px;
   border-radius: 16px;
   font-size: 0.85rem;
   font-weight: 600;
-  border: 1px solid rgba(59, 130, 246, 0.3);
+  border: 1px solid #add8e6; /* changed from rgba(59, 130, 246, 0.3) */
 }
 
 .no-members {
@@ -221,21 +221,21 @@
 }
 
 .vs-text {
-  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  background: linear-gradient(135deg, #007bff, #1e90ff); /* changed from var(--accent-primary), var(--accent-secondary) */
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   font-size: 2rem;
   font-weight: 900;
   padding: 16px;
-  border: 2px solid var(--card-border);
+  border: 2px solid #003366; /* changed from var(--card-border) */
   border-radius: 50%;
   width: 64px;
   height: 64px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--card-bg);
+  background-color: #0a2342; /* changed from var(--card-bg) */
 }
 
 /* Waiting State */
@@ -338,16 +338,17 @@
 
 .result-fill {
   height: 100%;
-  border-radius: 4px;
-  transition: width 0.8s ease;
+  background: linear-gradient(135deg, #007bff, #00bfff); /* changed from #3b82f6, #06b6d4 */
+  border-radius: 6px;
+  transition: width 0.5s ease;
 }
 
 .result-item.switch .result-fill {
-  background: linear-gradient(90deg, var(--accent-secondary), #0891b2);
+  background: linear-gradient(135deg, #ef4444, #dc2626);
 }
 
 .result-item.stay .result-fill {
-  background: linear-gradient(90deg, var(--accent-success), #059669);
+  background: linear-gradient(135deg, #10b981, #059669);
 }
 
 .result-count {
@@ -845,7 +846,7 @@
 }
 
 .vs-text {
-  background: linear-gradient(135deg, #3b82f6, #06b6d4, #8b5cf6);
+  background: linear-gradient(135deg, #007bff, #1e90ff); /* changed from var(--accent-primary), var(--accent-secondary) */
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -885,8 +886,8 @@
 }
 
 .my-team-waiting {
-  background: rgba(59, 130, 246, 0.1);
-  border: 1px solid rgba(59, 130, 246, 0.2);
+  background: #add8e6; /* changed from rgba(59, 130, 246, 0.1) */
+  border: 1px solid #87cefa; /* changed from rgba(59, 130, 246, 0.2) */
   border-radius: 12px;
   padding: 16px;
   margin: 20px 0;
@@ -958,7 +959,7 @@
 
 .result-fill {
   height: 100%;
-  background: linear-gradient(135deg, #3b82f6, #06b6d4);
+  background: linear-gradient(135deg, #007bff, #00bfff); /* changed from #3b82f6, #06b6d4 */
   border-radius: 6px;
   transition: width 0.5s ease;
 }

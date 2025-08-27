@@ -6,7 +6,7 @@
   justify-content: center;
   align-items: center;
   padding: 20px;
-  background: linear-gradient(135deg, #1e1e2f, #2a2a40); /* same dark gradient */
+  background: linear-gradient(135deg, #003366, #191970); /* changed from #1e1e2f, #2a2a40 */
   color: #ffffff; /* global white text */
 }
 
@@ -22,7 +22,7 @@
 .registration-header {
   position: relative;
   padding: 30px 30px 0;
-  background: linear-gradient(135deg, #1e1e2f, #2a2a40);
+  background: linear-gradient(135deg, #003366, #191970); /* changed from #1e1e2f, #2a2a40 */
   color: white;
 }
 
@@ -68,7 +68,7 @@
   font-size: 1.1rem;
 }
 .registration-info{
-  background: linear-gradient(135deg, #1e1e2f, #2a2a40);
+  background: linear-gradient(135deg, #003366, #191970); /* changed from #1e1e2f, #2a2a40 */
 }
 .classroom-info {
   margin-top: 15px;
@@ -85,7 +85,7 @@
 
 .registration-form {
   padding: 30px;
-  background: linear-gradient(135deg, #1e1e2f, #2a2a40);
+  background: linear-gradient(135deg, #003366, #191970); /* changed from #1e1e2f, #2a2a40 */
 }
 
 .form-group {
@@ -98,7 +98,7 @@
   gap: 8px;
   margin-bottom: 8px;
   font-weight: 600;
-  color: #2d3748;
+  color: #4169e1; /* changed from #2d3748 */
   font-size: 0.95rem;
 }
 
@@ -114,9 +114,9 @@
 
 .form-input:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: #007bff; /* changed from #667eea */
   background: white;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  box-shadow: 0 0 0 3px #b0c4de; /* changed from rgba(102, 126, 234, 0.1) */
 }
 
 .input-help {
@@ -132,7 +132,7 @@
 .register-btn {
   width: 100%;
   padding: 14px 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #007bff 0%, #00bfff 100%); /* changed from #667eea, #764ba2 */
   color: white;
   border: none;
   border-radius: 10px;
@@ -203,7 +203,7 @@ h4 {
 .step-number {
   width: 28px;
   height: 28px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #007bff 0%, #00bfff 100%); /* changed from #667eea, #764ba2 */
   color: white;
   border-radius: 50%;
   display: flex;
