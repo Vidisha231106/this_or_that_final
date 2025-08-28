@@ -3,8 +3,9 @@ import { doc, setDoc, getDoc, collection, query, where, getDocs } from 'firebase
 import {createGame} from './debateService';
 
 // Use environment variable or fallback to your key
-const GEMINI_API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY || 'AIzaSyCT33ONf8J1povWiKDGSigwPkg4lQr8ao8';// Fixed API URL - use the correct endpoint
-const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_API_KEY}`;
+const GEMINI_API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY || 'AIzaSyCT33ONf8J1povWiKDGSigwPkg4lQr8ao8';
+
+const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key=${GEMINI_API_KEY}`;
 const predefinedPasswords = [
   'logic101', 'rhetoric202', 'argument303', 'reason404', 'debate505',
   'clarity111', 'proof212', 'rebuttal313', 'ethos414', 'logos515',
@@ -176,7 +177,9 @@ export const generateDebateTopic = async () => {
 
     const response = await fetch(GEMINI_API_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json' ,
+        'x-goog-api-key': GEMINI_API_KEY
+      },
       body: JSON.stringify({
         contents: [{ parts: [{ text: prompt }] }],
         generationConfig: {
