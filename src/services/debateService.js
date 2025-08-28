@@ -80,13 +80,13 @@ export const subscribeToTeams = (classroomId, callback) => {
 
 export const registerStudent = async (classroomId, studentData) => {
   try {
-    const { name, admissionNumber } = studentData;
+    const { name, phoneNumber } = studentData;
     if (!classroomId) {
       throw new Error('Classroom ID is required');
     }
 
     const teamsRef = doc(db, 'teams', classroomId);
-    const studentDocRef = doc(db, 'students', `${classroomId}_${admissionNumber}`);
+    const studentDocRef = doc(db, 'students', `${classroomId}_${phoneNumber}`);
 
     // runTransaction will handle retries automatically if the data changes
     const result = await runTransaction(db, async (transaction) => {
@@ -103,19 +103,14 @@ export const registerStudent = async (classroomId, studentData) => {
 
       const allStudents = [...currentTeams.teamA, ...currentTeams.teamB];
 
-      // Check for duplicate admission number
-      if (allStudents.some(s => s.admissionNumber?.toLowerCase() === admissionNumber.toLowerCase())) {
-        throw new Error('Student with this admission number is already registered');
-      }
-
-      // Check for duplicate name
-      if (allStudents.some(s => s.name?.toLowerCase() === name.toLowerCase())) {
-        throw new Error('A student with this name is already registered');
-      }
+      // Check for duplicate phone number
+      if (allStudents.some(s => s.phoneNumber === phoneNumber)) {
+        throw new Error('Student with this phone number is already registered');
+      }      
 
       const student = {
         name,
-        admissionNumber,
+        phoneNumber,
         joinedAt: new Date().toISOString()
       };
 
@@ -160,10 +155,10 @@ export const registerStudent = async (classroomId, studentData) => {
     handleFirebaseError(error, 'registerStudent');
   }
 };
-// Get student by admission number and classroom
-export const getStudent = async (classroomId, admissionNumber) => {
+// Get student by phone number and classroom
+export const getStudent = async (classroomId, phoneNumber) => {
   try {
-    const studentRef = doc(db, 'students', `${classroomId}_${admissionNumber}`);
+    const studentRef = doc(db, 'students', `${classroomId}_${phoneNumber}`);
     const studentSnap = await getDoc(studentRef);
     
     if (studentSnap.exists()) {
@@ -305,14 +300,14 @@ export const updateTeams = async (classroomId, teamA, teamB) => {
 };
 
 // Remove student from team (Admin only)
-export const removeStudentFromTeam = async (classroomId, studentAdmissionNumber) => {
+export const removeStudentFromTeam = async (classroomId, studentPhoneNumber) => {
   try {
-    if (!classroomId || !studentAdmissionNumber) {
-      throw new Error('Classroom ID and admission number are required.');
+    if (!classroomId || !studentPhoneNumber) {
+      throw new Error('Classroom ID and phone number are required.');
     }
 
     // First, find the student to know which team they are on
-    const studentRef = doc(db, 'students', `${classroomId}_${studentAdmissionNumber}`);
+    const studentRef = doc(db, 'students', `${classroomId}_${studentPhoneNumber}`);
     const studentSnap = await getDoc(studentRef);
 
     if (!studentSnap.exists()) {
@@ -357,7 +352,7 @@ export const clearAllTeams = async (classroomId) => {
     try {
       const students = await getClassroomStudents(classroomId);
       const deletePromises = students.map(student => {
-        const studentRef = doc(db, 'students', `${classroomId}_${student.admissionNumber}`);
+        const studentRef = doc(db, 'students', `${classroomId}_${student.phoneNumber}`);
         return setDoc(studentRef, {}, { merge: false });
       });
       
@@ -626,9 +621,9 @@ export const deleteGame = async (classroomId, gameId) => {
     handleFirebaseError(error, 'deleteGame');
   }
 };
-export const subscribeToStudent = (classroomId, admissionNumber, callback) => {
+export const subscribeToStudent = (classroomId, phoneNumber, callback) => {
   try {
-    const studentRef = doc(db, 'students', `${classroomId}_${admissionNumber}`);
+    const studentRef = doc(db, 'students', `${classroomId}_${phoneNumber}`);
     return onSnapshot(studentRef, (doc) => {
       callback(doc.exists() ? doc.data() : null);
     });

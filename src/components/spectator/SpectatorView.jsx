@@ -80,7 +80,7 @@ function SpectatorView({ classroom, student }) {
             <div className="student-details">
               <h3><User size={20} /> Welcome, {student.name}!</h3>
               <div className="student-meta">
-                <span className="admission-number"><Hash size={14} /> {student.admissionNumber}</span>
+                <span className="phone-number"><Hash size={14} /> {student.phoneNumber}</span>
                 <span className={`team-assignment team-${student.assignedTeam?.toLowerCase()}`}>You're on Team {student.assignedTeam}</span>
               </div>
             </div>
@@ -118,7 +118,7 @@ function SpectatorView({ classroom, student }) {
             <div className="active-players-display">
               <div className="team-column">
                 <h4>Team A Speakers ({state.teamAStance})</h4>
-                <ul>{state.activePlayers.teamA.map(p => <li key={p.admissionNumber}>{p.name}</li>)}</ul>
+                <ul>{state.activePlayers.teamA.map(p => <li key={p.phoneNumber}>{p.name}</li>)}</ul>
               </div>
               <div className="vs-divider">
                 <div className="vs-text">VS</div>
@@ -126,7 +126,7 @@ function SpectatorView({ classroom, student }) {
 
               <div className="team-column">
                 <h4>Team B Speakers ({state.teamAStance === 'Pro' ? 'Con' : 'Pro'})</h4>
-                <ul>{state.activePlayers.teamB.map(p => <li key={p.admissionNumber}>{p.name}</li>)}</ul>
+                <ul>{state.activePlayers.teamB.map(p => <li key={p.phoneNumber}>{p.name}</li>)}</ul>
               </div>
             </div>
           </div>
@@ -143,9 +143,9 @@ function SpectatorView({ classroom, student }) {
           <div className="team-members">
             {state.teamA.length > 0 ? (
               state.teamA.map(member => (
-                <span key={member.admissionNumber} className={`member-badge ${student?.admissionNumber === member.admissionNumber ? 'me' : ''}`}>
+                <span key={member.phoneNumber} className={`member-badge ${student?.phoneNumber === member.phoneNumber ? 'me' : ''}`}>
                   {member.name}
-                  {student?.admissionNumber === member.admissionNumber && " (You)"}
+                  {student?.phoneNumber === member.phoneNumber && " (You)"}
                 </span>
               ))
             ) : ( getMyTeam() ? <p className="no-members">Syncing team...</p> : <p className="no-members">No students assigned yet</p> )}
@@ -160,9 +160,9 @@ function SpectatorView({ classroom, student }) {
           <div className="team-members">
             {state.teamB.length > 0 ? (
               state.teamB.map(member => (
-                <span key={member.admissionNumber} className={`member-badge ${student?.admissionNumber === member.admissionNumber ? 'me' : ''}`}>
+                <span key={member.phoneNumber} className={`member-badge ${student?.phoneNumber === member.phoneNumber ? 'me' : ''}`}>
                   {member.name}
-                  {student?.admissionNumber === member.admissionNumber && " (You)"}
+                  {student?.phoneNumber === member.phoneNumber && " (You)"}
                 </span>
               ))
             ) : ( getMyTeam() ? <p className="no-members">Syncing team...</p> : <p className="no-members">No students assigned yet</p> )}

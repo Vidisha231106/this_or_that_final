@@ -10,14 +10,14 @@ function CreateGameModal({ teamA, teamB, onCreate, onCancel }) {
   const handleSelectPlayer = (player, team) => {
     if (team === 'A') {
       setSelectedTeamA(prev => 
-        prev.find(p => p.admissionNumber === player.admissionNumber)
-          ? prev.filter(p => p.admissionNumber !== player.admissionNumber)
+        prev.find(p => p.phoneNumber === player.phoneNumber)
+          ? prev.filter(p => p.phoneNumber !== player.phoneNumber)
           : [...prev, player]
       );
     } else {
       setSelectedTeamB(prev => 
-        prev.find(p => p.admissionNumber === player.admissionNumber)
-          ? prev.filter(p => p.admissionNumber !== player.admissionNumber)
+        prev.find(p => p.phoneNumber === player.phoneNumber)
+          ? prev.filter(p => p.phoneNumber !== player.phoneNumber)
           : [...prev, player]
       );
     }
@@ -58,26 +58,26 @@ function CreateGameModal({ teamA, teamB, onCreate, onCancel }) {
           <div className="team-column">
             <h3>Team A ({selectedTeamA.length} selected)</h3>
             {teamA.map(player => (
-              <div key={player.admissionNumber} className="player-checkbox">
+              <div key={player.phoneNumber} className="player-checkbox">
                 <input
                   type="checkbox"
-                  id={`player-${player.admissionNumber}`}
+                  id={`player-${player.phoneNumber}`}
                   onChange={() => handleSelectPlayer(player, 'A')}
                 />
-                <label htmlFor={`player-${player.admissionNumber}`}>{player.name}</label>
+                <label htmlFor={`player-${player.phoneNumber}`}>{player.name}</label>
               </div>
             ))}
           </div>
           <div className="team-column">
             <h3>Team B ({selectedTeamB.length} selected)</h3>
             {teamB.map(player => (
-              <div key={player.admissionNumber} className="player-checkbox">
+              <div key={player.phoneNumber} className="player-checkbox">
                 <input
                   type="checkbox"
-                  id={`player-${player.admissionNumber}`}
+                  id={`player-${player.phoneNumber}`}
                   onChange={() => handleSelectPlayer(player, 'B')}
                 />
-                <label htmlFor={`player-${player.admissionNumber}`}>{player.name}</label>
+                <label htmlFor={`player-${player.phoneNumber}`}>{player.name}</label>
               </div>
             ))}
           </div>

@@ -49,7 +49,22 @@ function AdminDashboard() {
   const [isDataLoading, setIsDataLoading] = useState(true);
   const [clickCount, setClickCount] = useState(0);
   const clickTimer = useRef(null);
+  const [removingStudentId, setRemovingStudentId] = useState(null);
 
+
+  // In AdminDashboard.jsx, add this with your other useEffect hooks
+useEffect(() => {
+  if (!activeClassroom?.id) return;
+
+  // This will keep the master team list in the context up-to-date
+  const unsubscribe = subscribeToTeams(activeClassroom.id, (teamsData) => {
+    if (teamsData) {
+      actions.setTeams(teamsData);
+    }
+  });
+
+  return () => unsubscribe(); // Clean up the listener
+}, [activeClassroom?.id, actions]);
 
   useEffect(() => {
     // This function will run whenever a new classroom is loaded
@@ -115,18 +130,6 @@ function AdminDashboard() {
     return () => unsubscribe();
   }, [activeClassroom?.id]);
 
-  useEffect(() => {
-    if (!activeClassroom?.id) return;
-
-    // This will keep the master team list in the context up-to-date
-    const unsubscribe = subscribeToTeams(activeClassroom.id, (teamsData) => {
-      if (teamsData) {
-        actions.setTeams(teamsData);
-      }
-    });
-
-    return () => unsubscribe(); // Clean up the listener
-  }, [activeClassroom?.id]);
 
   const handleCreateClassroom = async (classroomData) => {
     try {
@@ -183,14 +186,14 @@ function AdminDashboard() {
     }
   };
 
-  const handleRemoveStudent = async (admissionNumber) => {
-    if (!activeClassroom) return;
-
+  const handleRemoveStudent = async (phoneNumber) => {
+    setRemovingStudentId(phoneNumber); // Disable the button immediately
     try {
-      await removeStudentFromTeam(activeClassroom.id, admissionNumber);
+      await removeStudentFromTeam(activeClassroom.id, phoneNumber);
     } catch (error) {
-      console.error('Error removing student:', error);
       actions.setError('Failed to remove student');
+    } finally {
+      setRemovingStudentId(null); // Re-enable buttons when done
     }
   };
 
@@ -226,18 +229,17 @@ function AdminDashboard() {
       actions.setError('Failed to start the timer.');
     }
   };
-  const handleTimerReset = async () => {
+  const handleTimerReset = async() => {
     if (!activeClassroom || !activeGameId) return;
     try {
       const timeInSeconds = timerMinutes * 60;
       await updateTimerInGame(activeClassroom.id, activeGameId, timeInSeconds, false);
     }
-    catch (error) {
-      console.error('Error resetting timer:', error);
-      actions.setError('Failed to reset the timer');
-    }
-  };
-
+    catch(error){
+    console.error('Error resetting timer:',error);
+    actions.setError('Failed to reset the timer');
+  }
+};
   const handleCreateGame = async (gameData) => {
     if (!activeClassroom) return;
 
@@ -259,7 +261,7 @@ function AdminDashboard() {
 
   const handleTimerPause = async () => {
     if (!activeClassroom || !activeGameId || !activeGame) return;
-
+  
     try {
       await updateTimerInGame(activeClassroom.id, activeGameId, activeGame.timer, false);
     } catch (error) {
@@ -517,21 +519,25 @@ function AdminDashboard() {
                 {/* Shows only when a game is LIVE */}
                 {activeGame.status === 'live' && (
                   <div className="active-debate">
-                    <TimerDisplay />
+                   <TimerDisplay />
+
+                    {/* First, the "Currently Speaking" paragraph */}
                     <p>
-                    <div className="vote-display">
-                  <div className="vote-item">
-                    <span>Vote to SWITCH:</span>
-                    <span className="vote-count">{activeGame.votes.switch}</span>
-                  </div>
-                  <div className="vote-item">
-                    <span>Vote to KEEP:</span>
-                    <span className="vote-count">{activeGame.votes.dontSwitch}</span>
-                  </div>
-                </div>
                       <strong>Currently Speaking:</strong> Team {activeGame.speakingFor}
-                      ({activeGame.speakingFor === 'A' ? activeGame.teamAStance : (activeGame.teamAStance === 'Pro' ? 'Con' : 'Pro')})
                     </p>
+
+                    {/* THEN, the vote display div, completely separate */}
+                    <div className="vote-display">
+                      <div className="vote-item">
+                        <span>Vote to SWITCH:</span>
+                        <span className="vote-count">{activeGame.votes.switch}</span>
+                      </div>
+                      <div className="vote-item">
+                        <span>Vote to KEEP:</span>
+                        <span className="vote-count">{activeGame.votes.dontSwitch}</span>
+                      </div>
+                    </div>
+
                     <div className="main-controls">
                       <button onClick={handleSwitchSides} className="btn btn-primary">
                         <RotateCcw size={16} /> Switch Sides
@@ -549,7 +555,7 @@ function AdminDashboard() {
                         />
                       </div>
                       <button onClick={handleTimerStart}>Start</button>
-                      <button onClick={handleTimerPause}>Pause</button>
+                      
                       <button onClick={handleTimerReset}>Reset</button>
                     </div>
                   </div>
@@ -576,20 +582,20 @@ function AdminDashboard() {
                   <h4>Team A ({state.teamA.length} students)</h4>
                   <ul className="team-list">
                     {state.teamA.map((student, index) => (
-                      <li key={student.admissionNumber || index} className="team-member">
+                      <li key={student.phoneNumber || index} className="team-member">
                         <div className="student-info">
                           <span className="student-name">{student.name}</span>
-                          <span className="student-id">ID: {student.admissionNumber}</span>
+                          <span className="student-id">ID: {student.phoneNumber}</span>
                           <span className="join-time">
                             Joined: {isClient ? new Date(student.joinedAt).toLocaleTimeString() : '...'}
                           </span>
                         </div>
                         <button
-                          onClick={() => handleRemoveStudent(student.admissionNumber)}
+                          onClick={() => handleRemoveStudent(student.phoneNumber)}
                           className="remove-btn"
-                          title="Remove student"
+                          disabled={removingStudentId === student.phoneNumber}
                         >
-                          ×
+                          {removingStudentId === student.phoneNumber ? '...' : '×'}
                         </button>
                       </li>
                     ))}
@@ -603,16 +609,16 @@ function AdminDashboard() {
                   <h4>Team B ({state.teamB.length} students)</h4>
                   <ul className="team-list">
                     {state.teamB.map((student, index) => (
-                      <li key={student.admissionNumber || index} className="team-member">
+                      <li key={student.phoneNumber || index} className="team-member">
                         <div className="student-info">
                           <span className="student-name">{student.name}</span>
-                          <span className="student-id">ID: {student.admissionNumber}</span>
+                          <span className="student-id">ID: {student.phoneNumber}</span>
                           <span className="join-time">
                             Joined: {new Date(student.joinedAt).toLocaleTimeString() || '...'}
                           </span>
                         </div>
                         <button
-                          onClick={() => handleRemoveStudent(student.admissionNumber)}
+                          onClick={() => handleRemoveStudent(student.phoneNumber)}
                           className="remove-btn"
                           title="Remove student"
                         >
@@ -648,7 +654,7 @@ function AdminDashboard() {
               <ul>
                 <li><strong>Share the password:</strong> Students use "{activeClassroom.password}" to join</li>
                 <li><strong>Auto-assignment:</strong> Students are automatically balanced between teams</li>
-                <li><strong>Student registration:</strong> Each student provides name and admission number</li>
+                <li><strong>Student registration:</strong> Each student provides name and phone number</li>
                 <li><strong>Remove students:</strong> Click the × next to any student to remove them</li>
                 <li><strong>Start when ready:</strong> Both teams need at least one student to begin</li>
               </ul>

@@ -6,7 +6,7 @@ import './StudentRegistration.css';
 function StudentRegistration({ classroom, onRegistrationComplete, onBack }) {
   const [formData, setFormData] = useState({
     studentName: '',
-    admissionNumber: ''
+    phoneNumber: ''
   });
   const [isRegistering, setIsRegistering] = useState(false);
   const [error, setError] = useState('');
@@ -17,7 +17,7 @@ function StudentRegistration({ classroom, onRegistrationComplete, onBack }) {
         const student = JSON.parse(savedDetails);
         setFormData({
           studentName: student.name || '',
-          admissionNumber: student.admissionNumber || ''
+          phoneNumber: student.phoneNumber || ''
         });
       }
     } catch (error) {
@@ -42,12 +42,12 @@ function StudentRegistration({ classroom, onRegistrationComplete, onBack }) {
       setError('Name must be at least 2 characters long');
       return false;
     }
-    if (!formData.admissionNumber.trim()) {
-      setError('Please enter your admission number');
+    if (!formData.phoneNumber.trim()) {
+      setError('Please enter your phone number');
       return false;
     }
-    if (formData.admissionNumber.trim().length < 3) {
-      setError('Admission number must be at least 3 characters long');
+    if (formData.phoneNumber.trim().length < 3) {
+      setError('Phone number must be at least 3 characters long');
       return false;
     }
     return true;
@@ -64,7 +64,7 @@ function StudentRegistration({ classroom, onRegistrationComplete, onBack }) {
     try {
       const studentData = {
         name: formData.studentName.trim(),
-        admissionNumber: formData.admissionNumber.trim().toUpperCase(),
+        phoneNumber: formData.phoneNumber.trim().toUpperCase(),
         joinedAt: new Date().toISOString()
       };
 
@@ -79,7 +79,7 @@ function StudentRegistration({ classroom, onRegistrationComplete, onBack }) {
     } catch (error) {
       console.error('Registration error:', error);
       if (error.message.includes('already registered')) {
-        setError('This admission number is already registered in this session');
+        setError('This phone number is already registered in this session');
       } else if (error.message.includes('name already exists')) {
         setError('This name is already registered. Please use your full name or add your last initial');
       } else {
@@ -142,32 +142,30 @@ function StudentRegistration({ classroom, onRegistrationComplete, onBack }) {
           </div>
 
           <div className="form-group">
-            <label htmlFor="admissionNumber" className="form-label">
-              <Hash size={16} />
-              Admission Number
-            </label>
-            <input
-              type="text"
-              id="admissionNumber"
-              name="admissionNumber"
-              className="form-input"
-              placeholder="e.g., 2024001, ST12345, A2024001"
-              value={formData.admissionNumber}
-              onChange={handleInputChange}
-              required
-              minLength={3}
-              maxLength={20}
-            />
-            <div className="input-help">
-              Your unique student ID or admission number
-            </div>
+          <label htmlFor="phoneNumber" className="form-label">
+            <Hash size={16} />
+            Phone Number
+          </label>
+          <input
+            type="tel" // Use "tel" for phone numbers
+            id="phoneNumber"
+            name="phoneNumber"
+            className="form-input"
+            placeholder="e.g., 9876543210"
+            value={formData.phoneNumber}
+            onChange={handleInputChange}
+            required
+          />
+          <div className="input-help">
+            Your phone number will be used as a unique identifier for this session.
           </div>
+        </div>
 
           <div className="form-actions">
             <button
               type="submit"
               className="register-btn btn-primary"
-              disabled={isRegistering || !formData.studentName.trim() || !formData.admissionNumber.trim()}
+              disabled={isRegistering || !formData.studentName.trim() || !formData.phoneNumber.trim()}
             >
               {isRegistering ? (
                 <>
