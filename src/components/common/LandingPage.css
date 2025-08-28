@@ -17,6 +17,10 @@
   --success-color: #10b981;
   --warning-color: #f59e0b;
 }
+.header-logo {
+  height: 150px; /* Adjust this value to your preferred size */
+  width: auto;
+}
 
 /* Background setup */
 body {
