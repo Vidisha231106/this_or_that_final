@@ -1,22 +1,63 @@
-/* Updated Header Styles with Student Info */
+/* Enhanced Modern Header Styles with Blue Dark Theme */
+:root {
+  --primary-blue: #1e40af;
+  --secondary-blue: #3b82f6;
+  --accent-blue: #60a5fa;
+  --dark-bg: #0f172a;
+  --dark-surface: #1e293b;
+  --dark-surface-light: #334155;
+  --glow-blue: #3b82f6;
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+}
+
 .app-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 12px 0;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(135deg, 
+    rgba(15, 23, 42, 0.98) 0%, 
+    rgba(30, 64, 175, 0.15) 25%,
+    rgba(59, 130, 246, 0.1) 50%,
+    rgba(30, 64, 175, 0.15) 75%,
+    rgba(15, 23, 42, 0.98) 100%
+  );
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+  color: var(--text-primary);
+  padding: 16px 0;
+  box-shadow: 
+    0 4px 32px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(59, 130, 246, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 1000;
+  transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  transform-style: preserve-3d;
+}
+
+.app-header.scrolled {
+  padding: 12px 0;
+  box-shadow: 
+    0 8px 40px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(59, 130, 246, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  background: linear-gradient(135deg, 
+    rgba(15, 23, 42, 0.95) 0%, 
+    rgba(30, 64, 175, 0.2) 50%,
+    rgba(15, 23, 42, 0.95) 100%
+  );
 }
 
 .header-content {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 20px;
-  gap: 20px;
+  padding: 0 24px;
+  gap: 32px;
+  transition: all 0.4s ease-out;
 }
 
 .header-left {
@@ -24,30 +65,53 @@
   flex-direction: column;
   align-items: flex-start;
   flex-shrink: 0;
+  opacity: 0;
+  transform: translateX(-30px);
+  animation: slideInLeft 0.8s ease-out 0.2s forwards;
 }
 
 .app-title {
   margin: 0;
-  font-size: 1.8rem;
-  font-weight: 700;
-  background: linear-gradient(45deg, #fff, #f0f8ff);
+  font-size: 2rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, 
+    var(--text-primary) 0%, 
+    var(--accent-blue) 50%, 
+    var(--secondary-blue) 100%
+  );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  text-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+  filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.2));
+  letter-spacing: -0.02em;
+  transition: all 0.3s ease;
+}
+
+.app-title:hover {
+  transform: translateY(-1px);
+  filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.4));
 }
 
 .app-tagline {
-  font-size: 0.85rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin-top: 2px;
+  letter-spacing: 0.02em;
+  text-shadow: 0 0 10px rgba(203, 213, 225, 0.3);
   opacity: 0.9;
-  font-weight: 400;
-  margin-top: -2px;
+  transition: opacity 0.3s ease;
 }
 
 .header-center {
   flex: 1;
   display: flex;
   justify-content: center;
-  max-width: 600px;
+  max-width: 700px;
+  opacity: 0;
+  transform: translateY(-20px);
+  animation: slideInDown 0.8s ease-out 0.4s forwards;
 }
 
 .admin-info,
@@ -55,520 +119,552 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
+  transition: transform 0.3s ease;
+}
+
+.admin-info:hover,
+.spectator-info:hover {
+  transform: translateY(-2px);
 }
 
 .role-badge {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 0.9rem;
-  font-weight: 600;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: 50px;
+  font-size: 0.95rem;
+  font-weight: 700;
   white-space: nowrap;
+  user-select: none;
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.role-badge::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(255, 255, 255, 0.1), 
+    transparent
+  );
+  transition: left 0.6s ease;
+}
+
+.role-badge:hover::before {
+  left: 100%;
 }
 
 .role-badge.admin {
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: linear-gradient(135deg, 
+    rgba(59, 130, 246, 0.15) 0%, 
+    rgba(30, 64, 175, 0.2) 100%
+  );
+  border: 2px solid rgba(59, 130, 246, 0.3);
+  color: var(--text-primary);
+  box-shadow: 
+    0 4px 20px rgba(59, 130, 246, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+}
+
+.role-badge.admin:hover {
+  border-color: rgba(59, 130, 246, 0.6);
+  box-shadow: 
+    0 8px 30px rgba(59, 130, 246, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px) scale(1.02);
 }
 
 .role-badge.spectator {
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: linear-gradient(135deg, 
+    rgba(94, 65, 152, 0.15) 0%, 
+    rgba(79, 70, 229, 0.2) 100%
+  );
+  border: 2px solid rgba(139, 92, 246, 0.3);
+  color: var(--text-primary);
+  box-shadow: 
+    0 4px 20px rgba(139, 92, 246, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  text-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+}
+
+.role-badge.spectator:hover {
+  border-color: rgba(139, 92, 246, 0.6);
+  box-shadow: 
+    0 8px 30px rgba(139, 92, 246, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px) scale(1.02);
 }
 
 .session-details {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 
 .classroom-info {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
   text-align: center;
+  padding: 8px 16px;
+  background: rgba(59, 130, 246, 0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(59, 130, 246, 0.1);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.classroom-info:hover {
+  background: rgba(59, 130, 246, 0.08);
+  border-color: rgba(59, 130, 246, 0.2);
+  transform: translateY(-1px);
 }
 
 .classroom-name {
-  font-weight: 600;
-  font-size: 0.95rem;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text-primary);
+  text-shadow: 0 0 10px rgba(248, 250, 252, 0.3);
 }
 
 .classroom-password {
-  font-size: 0.85rem;
-  opacity: 0.9;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
 }
 
 .classroom-password strong {
-  background: rgba(255, 255, 255, 0.2);
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-family: 'Courier New', monospace;
+  background: linear-gradient(135deg, 
+    rgba(59, 130, 246, 0.2) 0%, 
+    rgba(30, 64, 175, 0.3) 100%
+  );
+  color: var(--text-primary);
+  padding: 4px 12px;
+  border-radius: 8px;
+  font-family: 'SF Mono', 'Consolas', 'Monaco', monospace;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  box-shadow: 
+    0 2px 8px rgba(59, 130, 246, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+  text-shadow: 0 0 8px rgba(248, 250, 252, 0.4);
+}
+
+.classroom-password strong:hover {
+  transform: scale(1.05);
+  box-shadow: 
+    0 4px 15px rgba(59, 130, 246, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .session-status {
-  font-size: 0.8rem;
-  opacity: 0.8;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
+  font-weight: 500;
 }
 
-.session-status:before {
-  content: "●";
-  color: #4ade80;
-  animation: pulse 2s infinite;
+.session-status::before {
+  content: "â—";
+  color: #10b981;
+  font-size: 0.7rem;
+  animation: pulse-glow 2s infinite ease-in-out;
+  filter: drop-shadow(0 0 6px rgba(16, 185, 129, 0.8));
 }
 
 .student-info {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  background: rgba(255, 255, 255, 0.1);
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  gap: 8px;
+  background: linear-gradient(135deg, 
+    rgba(30, 41, 59, 0.8) 0%, 
+    rgba(51, 65, 85, 0.6) 100%
+  );
+  padding: 16px 20px;
+  border-radius: 20px;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  backdrop-filter: blur(20px);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(59, 130, 246, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.student-info:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 
+    0 16px 48px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(59, 130, 246, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border-color: rgba(59, 130, 246, 0.4);
 }
 
 .student-name {
   display: flex;
   align-items: center;
-  gap: 5px;
-  font-weight: 600;
-  font-size: 0.9rem;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text-primary);
+  text-shadow: 0 0 15px rgba(248, 250, 252, 0.4);
 }
 
 .student-details {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 0.8rem;
-  opacity: 0.9;
+  gap: 16px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
 }
 
 .admission-number {
   display: flex;
   align-items: center;
-  gap: 3px;
-  font-family: 'Courier New', monospace;
-  background: rgba(255, 255, 255, 0.15);
-  padding: 2px 5px;
-  border-radius: 3px;
+  gap: 6px;
+  font-family: 'SF Mono', 'Consolas', 'Monaco', monospace;
+  background: rgba(59, 130, 246, 0.15);
+  color: var(--accent-blue);
+  padding: 6px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-shadow: 0 0 8px rgba(96, 165, 250, 0.5);
+  transition: all 0.3s ease;
+}
+
+.admission-number:hover {
+  background: rgba(59, 130, 246, 0.2);
+  border-color: rgba(59, 130, 246, 0.4);
+  transform: scale(1.05);
 }
 
 .team-indicator {
-  padding: 2px 6px;
-  border-radius: 10px;
-  font-weight: 600;
-  font-size: 0.75rem;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.8rem;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
+  border: 1px solid transparent;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.team-indicator::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.6s ease;
+}
+
+.team-indicator:hover::before {
+  left: 100%;
 }
 
 .team-indicator.team-a {
-  background: rgba(59, 130, 246, 0.8);
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.9) 0%, rgba(37, 99, 235, 1) 100%);
   color: white;
+  border-color: rgba(59, 130, 246, 0.3);
+  box-shadow: 
+    0 4px 20px rgba(59, 130, 246, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.team-indicator.team-a:hover {
+  transform: translateY(-2px) scale(1.1);
+  box-shadow: 
+    0 8px 30px rgba(59, 130, 246, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
 .team-indicator.team-b {
-  background: rgba(239, 68, 68, 0.8);
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.9) 0%, rgba(220, 38, 38, 1) 100%);
   color: white;
+  border-color: rgba(239, 68, 68, 0.3);
+  box-shadow: 
+    0 4px 20px rgba(239, 68, 68, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.team-indicator.team-b:hover {
+  transform: translateY(-2px) scale(1.1);
+  box-shadow: 
+    0 8px 30px rgba(239, 68, 68, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
 .header-right {
   display: flex;
   align-items: center;
   flex-shrink: 0;
+  opacity: 0;
+  transform: translateX(30px);
+  animation: slideInRight 0.8s ease-out 0.6s forwards;
 }
 
 .logout-btn {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
-  background: rgba(239, 68, 68, 0.2);
-  color: white;
-  border: 1px solid rgba(206, 60, 60, 0.3);
-  border-radius: 8px;
+  gap: 8px;
+  padding: 12px 20px;
+  background: linear-gradient(135deg, 
+    rgba(239, 68, 68, 0.1) 0%, 
+    rgba(220, 38, 38, 0.2) 100%
+  );
+  color: var(--text-primary);
+  border: 2px solid rgba(239, 68, 68, 0.3);
+  border-radius: 50px;
   font-size: 0.9rem;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  position: relative;
+  overflow: hidden;
+  text-shadow: 0 0 10px rgba(248, 250, 252, 0.3);
+}
+
+.logout-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(239, 68, 68, 0.3), 
+    transparent
+  );
+  transition: left 0.6s ease;
+}
+
+.logout-btn:hover::before {
+  left: 100%;
 }
 
 .logout-btn:hover {
-  background: rgba(239, 68, 68, 0.3);
-  border-color: rgba(239, 68, 68, 0.5);
-  transform: translateY(-1px);
+  background: linear-gradient(135deg, 
+    rgba(239, 68, 68, 0.2) 0%, 
+    rgba(220, 38, 38, 0.4) 100%
+  );
+  border-color: rgba(239, 68, 68, 0.6);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 
+    0 8px 30px rgba(239, 68, 68, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
-@keyframes pulse {
+.logout-btn:active {
+  transform: translateY(-1px) scale(1.02);
+}
+
+/* Animations */
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-glow {
   0%, 100% {
     opacity: 1;
+    transform: scale(1);
+    filter: drop-shadow(0 0 6px rgba(16, 185, 129, 0.8));
   }
   50% {
-    opacity: 0.5;
+    opacity: 0.6;
+    transform: scale(0.9);
+    filter: drop-shadow(0 0 12px rgba(16, 185, 129, 1));
+  }
+}
+
+/* Scroll-triggered animations */
+.header-content.fade-in {
+  animation: fadeInScale 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }
 
 /* Responsive Design */
-@media (max-width: 968px) {
+@media (max-width: 1024px) {
   .header-content {
     flex-direction: column;
-    gap: 12px;
-    padding: 0 15px;
+    gap: 20px;
+    padding: 0 20px;
   }
   
   .header-left {
     align-items: center;
+    animation: slideInDown 0.6s ease-out 0.2s forwards;
   }
   
   .app-title {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
   }
   
   .header-center {
     order: 3;
     max-width: 100%;
+    animation: slideInUp 0.6s ease-out 0.4s forwards;
   }
   
   .header-right {
     order: 2;
-  }
-  
-  .student-info {
-    flex-direction: row;
-    align-items: center;
-    gap: 8px;
-  }
-  
-  .student-details {
-    flex-direction: column;
-    gap: 4px;
-    align-items: center;
+    animation: slideInUp 0.6s ease-out 0.3s forwards;
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .app-header {
-    padding: 10px 0;
+    padding: 12px 0;
   }
   
-  .classroom-info {
-    flex-direction: column;
-    gap: 4px;
+  .header-content {
+    gap: 16px;
+    padding: 0 16px;
   }
   
-  .classroom-password {
-    font-size: 0.8rem;
-  }
-  
-  .student-info {
-    padding: 6px 10px;
-  }
-  
-  .student-name {
-    font-size: 0.85rem;
-  }
-  
-  .student-details {
-    font-size: 0.75rem;
-    gap: 8px;
-  }
-  
-  .logout-btn {
-    padding: 6px 10px;
-    font-size: 0.85rem;
-  }
-}
-
-/* Header Center Content */
-.header-center {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  max-width: 600px;
-}
-
-.admin-info,
-.spectator-info {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-}
-
-/* Non-button role badges - removed button-like appearance */
-.role-badge {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
-  border-radius: 25px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  white-space: nowrap;
-  /* Removed cursor pointer and hover effects */
-  transition: none;
-  user-select: none; /* Prevent text selection */
-}
-
-.role-badge.admin {
-  background: rgba(255, 255, 255, 0.25);
-  border: 2px solid rgba(255, 255, 255, 0.4);
-  color: white;
-  /* Subtle inner glow for elegance */
-  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.3);
-}
-
-.role-badge.spectator {
-  background: rgba(255, 255, 255, 0.2);
-  border: 2px solid rgba(255, 255, 255, 0.35);
-  color: white;
-  /* Subtle inner glow for elegance */
-  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.25);
-}
-
-/* Session Details */
-.session-details {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-}
-
-.classroom-info {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  text-align: center;
-}
-
-.classroom-name {
-  font-weight: 600;
-  font-size: 0.95rem;
-  color: white;
-}
-
-.classroom-password {
-  font-size: 0.85rem;
-  opacity: 0.9;
-  color: rgba(255, 255, 255, 0.9);
-}
-
-.classroom-password strong {
-  background: rgba(255, 255, 255, 0.25);
-  padding: 3px 8px;
-  border-radius: 6px;
-  font-family: 'Courier New', monospace;
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-.session-status {
-  font-size: 0.8rem;
-  opacity: 0.85;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  color: rgba(255, 255, 255, 0.85);
-}
-
-.session-status:before {
-  content: "●";
-  color: #4ade80;
-  animation: pulse 2s infinite;
-  filter: drop-shadow(0 0 3px rgba(74, 222, 128, 0.6));
-}
-
-/* Student Info Container */
-.student-info {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  background: rgba(255, 255, 255, 0.15);
-  padding: 10px 14px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(5px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.student-name {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-weight: 600;
-  font-size: 0.9rem;
-  color: white;
-}
-
-.student-details {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 0.8rem;
-  opacity: 0.9;
-}
-
-.admission-number {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-family: 'Courier New', monospace;
-  background: rgba(255, 255, 255, 0.2);
-  padding: 3px 6px;
-  border-radius: 5px;
-  color: rgba(255, 255, 255, 0.95);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-}
-
-.team-indicator {
-  padding: 3px 8px;
-  border-radius: 12px;
-  font-weight: 600;
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  border: 1px solid transparent;
-}
-
-.team-indicator.team-a {
-  background: rgba(59, 130, 246, 0.9);
-  color: white;
-  border-color: rgba(59, 130, 246, 0.3);
-  box-shadow: 0 1px 3px rgba(59, 130, 246, 0.3);
-}
-
-.team-indicator.team-b {
-  background: rgba(239, 68, 68, 0.9);
-  color: white;
-  border-color: rgba(239, 68, 68, 0.3);
-  box-shadow: 0 1px 3px rgba(239, 68, 68, 0.3);
-}
-
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.6;
-    transform: scale(0.95);
-  }
-}
-
-/* Responsive Design */
-@media (max-width: 968px) {
-  .header-center {
-    order: 3;
-    max-width: 100%;
-    justify-content: center;
-  }
-  
-  .admin-info,
-  .spectator-info {
-    align-items: center;
-    text-align: center;
+  .app-title {
+    font-size: 1.6rem;
   }
   
   .role-badge {
-    padding: 6px 12px;
-    font-size: 0.85rem;
-  }
-  
-  .student-info {
-    flex-direction: row;
-    align-items: center;
-    gap: 10px;
-    padding: 8px 12px;
-  }
-  
-  .student-details {
-    flex-direction: column;
-    gap: 4px;
-    align-items: center;
-  }
-  
-  .classroom-info {
-    flex-direction: column;
-    gap: 6px;
-  }
-}
-
-@media (max-width: 640px) {
-  .role-badge {
-    padding: 5px 10px;
-    font-size: 0.8rem;
-    gap: 4px;
-  }
-  
-  .classroom-info {
-    flex-direction: column;
-    gap: 4px;
-  }
-  
-  .classroom-name {
+    padding: 10px 16px;
     font-size: 0.9rem;
   }
   
-  .classroom-password {
-    font-size: 0.8rem;
-  }
-  
-  .classroom-password strong {
-    padding: 2px 6px;
-    font-size: 0.75rem;
-  }
-  
   .student-info {
-    padding: 6px 10px;
-    gap: 8px;
-  }
-  
-  .student-name {
-    font-size: 0.85rem;
-    gap: 4px;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
   }
   
   .student-details {
-    font-size: 0.75rem;
+    flex-direction: column;
+    gap: 6px;
+    align-items: center;
+  }
+  
+  .classroom-info {
+    flex-direction: column;
     gap: 8px;
+    padding: 10px 14px;
+  }
+}
+
+@media (max-width: 640px) {
+  .app-title {
+    font-size: 1.4rem;
   }
   
-  .admission-number {
-    gap: 3px;
-    padding: 2px 5px;
-    font-size: 0.7rem;
+  .role-badge {
+    padding: 8px 14px;
+    font-size: 0.85rem;
   }
   
-  .team-indicator {
-    padding: 2px 6px;
-    font-size: 0.7rem;
+  .logout-btn {
+    padding: 10px 16px;
+    font-size: 0.85rem;
+  }
+  
+  .student-info {
+    padding: 10px 14px;
+  }
+  
+  .classroom-password strong {
+    padding: 3px 8px;
+    font-size: 0.8rem;
   }
 }
 
 @media (max-width: 480px) {
+  .header-content {
+    gap: 12px;
+    padding: 0 12px;
+  }
+  
+  .app-title {
+    font-size: 1.3rem;
+  }
+  
   .role-badge {
-    padding: 4px 8px;
-    font-size: 0.75rem;
-    border-radius: 20px;
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    border-radius: 25px;
   }
   
   .student-info {
     flex-direction: column;
-    gap: 6px;
-    padding: 6px 8px;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 16px;
   }
   
   .student-details {
     flex-direction: row;
-    gap: 6px;
+    gap: 8px;
+  }
+  
+  .logout-btn {
+    padding: 8px 14px;
+    font-size: 0.8rem;
   }
 }

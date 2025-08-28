@@ -400,6 +400,10 @@ useEffect(() => {
       <div className="admin-dashboard">
         {/* Classroom Header */}
         <div className="classroom-header card">
+          <div className="header-left">
+        <div className="landing-header">
+              <h1>This or That</h1>
+            </div>
           <div className="classroom-info">
             <h2>{activeClassroom.name}</h2>
             <div className="classroom-meta">
@@ -422,10 +426,13 @@ useEffect(() => {
               </div>
             </div>
           </div>
+          </div>
+          <div className="header-actions">
           <button className="new-session-btn btn-secondary" onClick={handleNewClassroom}>
             <Plus size={16} />
             New Session
           </button>
+          </div>
         </div>
 
         {isDataLoading ? (

@@ -1,12 +1,71 @@
-.landing-page {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 60px 20px;
-  text-align: center;
+/* Enhanced Landing Page Styles with Blue Dark Theme */
+:root {
+  --primary-blue: #1e40af;
+  --secondary-blue: #3b82f6;
+  --accent-blue: #60a5fa;
+  --dark-bg: #0f172a;
+  --dark-surface: #1e293b;
+  --dark-surface-light: #334155;
+  --glow-blue: #3b82f6;
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --glass-bg: rgba(30, 41, 59, 0.8);
+  --glass-border: rgba(59, 130, 246, 0.2);
+  --card-bg: rgba(30, 41, 59, 0.6);
+  --card-border: rgba(59, 130, 246, 0.15);
+  --success-color: #10b981;
+  --warning-color: #f59e0b;
 }
 
+/* Background setup */
+body {
+  background: linear-gradient(135deg, 
+    var(--dark-bg) 0%, 
+    rgba(30, 64, 175, 0.1) 25%,
+    rgba(15, 23, 42, 0.95) 50%,
+    rgba(59, 130, 246, 0.1) 75%,
+    var(--dark-bg) 100%
+  );
+  background-attachment: fixed;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(30, 64, 175, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 40% 60%, rgba(96, 165, 250, 0.05) 0%, transparent 50%);
+  animation: backgroundFloat 30s ease-in-out infinite;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.landing-page {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 80px 24px;
+  text-align: center;
+  position: relative;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: pageEntrance 1s ease-out 0.2s forwards;
+}
+
+/* Landing Header */
 .landing-header {
-  margin-bottom: 80px;
+  margin-bottom: 120px;
+  opacity: 0;
+  transform: translateY(30px);
+  animation: slideInUp 0.8s ease-out 0.4s forwards;
 }
 
 .landing-header h1 {
@@ -18,46 +77,108 @@
   -webkit-text-fill-color: transparent;
   margin-bottom: 16px;
   letter-spacing: -0.02em;
+  /* Add glow effect: */
+  text-shadow: 0 0 16px #3b82f6, 0 0 32px #8b5cf6;
+}
+
+.landing-header h1:hover {
+  transform: translateY(-4px);
+  filter: drop-shadow(0 0 30px rgba(59, 130, 246, 0.4));
+  text-shadow: 0 0 60px rgba(59, 130, 246, 0.5);
+}
+
+.landing-header h1::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, 
+    rgba(59, 130, 246, 0.1) 0%, 
+    transparent 50%, 
+    rgba(139, 92, 246, 0.1) 100%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  border-radius: 12px;
+  z-index: -1;
+}
+
+.landing-header h1:hover::after {
+  opacity: 1;
 }
 
 .tagline {
-  font-size: 1.75rem;
-  color: #a5b4fc;
-  font-weight: 500;
-  margin-bottom: 16px;
+  font-size: 2rem;
+  color: var(--accent-blue);
+  font-weight: 600;
+  margin-bottom: 24px;
   font-style: italic;
+  text-shadow: 0 0 20px rgba(96, 165, 250, 0.4);
+  opacity: 0.95;
+  transition: all 0.3s ease;
+  letter-spacing: 0.01em;
+}
+
+.tagline:hover {
+  color: var(--text-primary);
+  text-shadow: 0 0 30px rgba(248, 250, 252, 0.5);
+  transform: translateY(-2px);
 }
 
 .description {
-  font-size: 1.2rem;
-  color: #6b7280;
-  max-width: 600px;
+  font-size: 1.3rem;
+  color: var(--text-secondary);
+  max-width: 700px;
   margin: 0 auto;
-  line-height: 1.6;
+  line-height: 1.7;
+  font-weight: 500;
+  text-shadow: 0 0 15px rgba(203, 213, 225, 0.2);
+  opacity: 0.9;
+  transition: all 0.3s ease;
 }
 
+.description:hover {
+  color: var(--text-primary);
+  opacity: 1;
+}
+
+/* Role Selection */
 .role-selection {
-  margin-bottom: 100px;
+  margin-bottom: 140px;
+  opacity: 0;
+  transform: translateY(40px);
+  animation: slideInUp 0.8s ease-out 0.6s forwards;
 }
 
 .role-cards {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 40px;
-  max-width: 900px;
+  gap: 48px;
+  max-width: 1000px;
   margin: 0 auto;
 }
 
 .role-card {
-  background: var(--card-bg);
+  background: linear-gradient(135deg, 
+    var(--card-bg) 0%, 
+    rgba(51, 65, 85, 0.4) 100%
+  );
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--card-border);
-  border-radius: 20px;
-  padding: 40px 32px;
+  border-radius: 24px;
+  padding: 48px 40px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
   text-align: center;
   position: relative;
   overflow: hidden;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 .role-card::before {
@@ -67,183 +188,516 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, transparent 0%, rgba(59, 130, 246, 0.05) 100%);
+  background: linear-gradient(135deg, 
+    rgba(59, 130, 246, 0.05) 0%, 
+    transparent 50%, 
+    rgba(139, 92, 246, 0.05) 100%
+  );
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.5s ease;
+}
+
+.role-card::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, 
+    transparent 30%, 
+    rgba(59, 130, 246, 0.1) 50%, 
+    transparent 70%
+  );
+  opacity: 0;
+  transform: rotate(-45deg);
+  transition: all 0.6s ease;
+  pointer-events: none;
 }
 
 .role-card:hover {
-  transform: translateY(-8px);
-  border-color: rgba(59, 130, 246, 0.3);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  transform: translateY(-12px) scale(1.02);
+  border-color: rgba(59, 130, 246, 0.4);
+  box-shadow: 
+    0 32px 64px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(59, 130, 246, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .role-card:hover::before {
   opacity: 1;
 }
 
+.role-card:hover::after {
+  opacity: 1;
+  transform: rotate(-45deg) translate(50%, 50%);
+}
+
 .spectator-card:hover {
-  border-color: rgba(59, 130, 246, 0.4);
+  border-color: rgba(59, 130, 246, 0.5);
+  box-shadow: 
+    0 32px 64px rgba(59, 130, 246, 0.15),
+    0 0 0 1px rgba(59, 130, 246, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .admin-card:hover {
-  border-color: rgba(16, 185, 129, 0.4);
+  border-color: rgba(16, 185, 129, 0.5);
+  box-shadow: 
+    0 32px 64px rgba(16, 185, 129, 0.15),
+    0 0 0 1px rgba(16, 185, 129, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .card-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 80px;
-  height: 80px;
-  border-radius: 20px;
-  margin-bottom: 24px;
+  width: 100px;
+  height: 100px;
+  border-radius: 24px;
+  margin-bottom: 32px;
   position: relative;
-  z-index: 1;
+  z-index: 2;
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  box-shadow: 
+    0 8px 24px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.card-icon:hover {
+  transform: scale(1.1) rotate(5deg);
 }
 
 .spectator-card .card-icon {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(6, 182, 212, 0.1));
-  color: #3b82f6;
+  background: linear-gradient(135deg, 
+    rgba(59, 130, 246, 0.15) 0%, 
+    rgba(6, 182, 212, 0.15) 100%
+  );
+  color: var(--accent-blue);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  text-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
 }
 
 .admin-card .card-icon {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1));
-  color: #10b981;
+  background: linear-gradient(135deg, 
+    rgba(16, 185, 129, 0.15) 0%, 
+    rgba(5, 150, 105, 0.15) 100%
+  );
+  color: var(--success-color);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  text-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
 }
 
 .role-card h3 {
-  font-size: 1.75rem;
-  margin-bottom: 16px;
-  color: var(--text);
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: var(--text-primary);
   position: relative;
-  z-index: 1;
+  z-index: 2;
+  font-weight: 800;
+  text-shadow: 0 0 20px rgba(248, 250, 252, 0.3);
+  transition: all 0.3s ease;
+}
+
+.role-card:hover h3 {
+  text-shadow: 0 0 30px rgba(248, 250, 252, 0.5);
+  transform: translateY(-2px);
 }
 
 .role-card > p {
-  font-size: 1.1rem;
-  color: var(--muted);
-  line-height: 1.6;
-  margin-bottom: 24px;
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 32px;
   position: relative;
-  z-index: 1;
+  z-index: 2;
+  font-weight: 500;
+  opacity: 0.9;
+  transition: all 0.3s ease;
+}
+
+.role-card:hover > p {
+  color: var(--text-primary);
+  opacity: 1;
 }
 
 .feature-list {
   list-style: none;
   padding: 0;
-  margin: 32px 0;
+  margin: 40px 0;
   text-align: left;
   position: relative;
-  z-index: 1;
+  z-index: 2;
 }
 
 .feature-list li {
-  padding: 8px 0;
-  font-size: 0.95rem;
-  color: var(--muted);
+  padding: 12px 0;
+  font-size: 1rem;
+  color: var(--text-secondary);
   position: relative;
-  padding-left: 24px;
+  padding-left: 32px;
+  font-weight: 500;
+  opacity: 0.9;
+  transition: all 0.3s ease;
+}
+
+.feature-list li:hover {
+  color: var(--text-primary);
+  opacity: 1;
+  transform: translateX(4px);
 }
 
 .feature-list li::before {
-  content: '✓';
+  content: 'âœ“';
   position: absolute;
   left: 0;
-  color: #10b981;
+  color: var(--success-color);
   font-weight: bold;
+  font-size: 1.1rem;
+  text-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+  transition: all 0.3s ease;
+}
+
+.feature-list li:hover::before {
+  text-shadow: 0 0 15px rgba(16, 185, 129, 0.8);
+  transform: scale(1.2);
 }
 
 .role-btn {
   width: 100%;
-  padding: 16px 32px;
-  font-size: 1.1rem;
+  padding: 20px 40px;
+  font-size: 1.2rem;
   font-weight: 700;
-  border-radius: 12px;
-  margin-top: 8px;
+  border-radius: 16px;
+  margin-top: 16px;
   position: relative;
-  z-index: 1;
-  transition: all 0.3s ease;
+  z-index: 2;
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  border: 2px solid transparent;
+  cursor: pointer;
+  overflow: hidden;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.role-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(255, 255, 255, 0.2), 
+    transparent
+  );
+  transition: left 0.6s ease;
+}
+
+.role-btn:hover::before {
+  left: 100%;
 }
 
 .role-btn:hover {
-  transform: translateY(-2px);
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 
+    0 12px 32px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
+.spectator-card .role-btn {
+  background: linear-gradient(135deg, 
+    var(--secondary-blue) 0%, 
+    var(--primary-blue) 100%
+  );
+  color: white;
+  text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.spectator-card .role-btn:hover {
+  border-color: rgba(59, 130, 246, 0.6);
+  box-shadow: 
+    0 12px 32px rgba(59, 130, 246, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.admin-card .role-btn {
+  background: linear-gradient(135deg, 
+    var(--success-color) 0%, 
+    #059669 100%
+  );
+  color: white;
+  text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.admin-card .role-btn:hover {
+  border-color: rgba(16, 185, 129, 0.6);
+  box-shadow: 
+    0 12px 32px rgba(16, 185, 129, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* Landing Features */
 .landing-features {
-  margin-bottom: 80px;
+  margin-bottom: 120px;
+  opacity: 0;
+  transform: translateY(50px);
+  animation: slideInUp 0.8s ease-out 0.8s forwards;
+}
+
+.landing-features h2 {
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 60px;
+  text-shadow: 0 0 30px rgba(248, 250, 252, 0.3);
+  background: linear-gradient(135deg, 
+    var(--text-primary) 0%, 
+    var(--accent-blue) 100%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .feature-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 32px;
-  max-width: 1000px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 40px;
+  max-width: 1200px;
   margin: 0 auto;
 }
 
 .feature-item {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 16px;
-  padding: 32px 24px;
+  background: linear-gradient(135deg, 
+    rgba(30, 41, 59, 0.6) 0%, 
+    rgba(51, 65, 85, 0.4) 100%
+  );
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(59, 130, 246, 0.15);
+  border-radius: 20px;
+  padding: 40px 32px;
   text-align: center;
-  transition: all 0.3s ease;
+  transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.feature-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, 
+    rgba(59, 130, 246, 0.05) 0%, 
+    transparent 100%
+  );
+  opacity: 0;
+  transition: opacity 0.5s ease;
 }
 
 .feature-item:hover {
-  transform: translateY(-4px);
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.12);
+  transform: translateY(-8px) scale(1.02);
+  border-color: rgba(59, 130, 246, 0.3);
+  box-shadow: 
+    0 24px 48px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(59, 130, 246, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.feature-item:hover::before {
+  opacity: 1;
 }
 
 .feature-item h4 {
-  font-size: 1.3rem;
-  margin-bottom: 16px;
-  color: var(--text);
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  color: var(--text-primary);
+  font-weight: 700;
+  text-shadow: 0 0 15px rgba(248, 250, 252, 0.3);
+  transition: all 0.3s ease;
+}
+
+.feature-item:hover h4 {
+  text-shadow: 0 0 25px rgba(248, 250, 252, 0.5);
+  transform: translateY(-2px);
 }
 
 .feature-item p {
-  color: var(--muted);
-  line-height: 1.6;
+  color: var(--text-secondary);
+  line-height: 1.7;
   margin: 0;
+  font-size: 1.1rem;
+  font-weight: 500;
+  opacity: 0.9;
+  transition: all 0.3s ease;
 }
 
+.feature-item:hover p {
+  color: var(--text-primary);
+  opacity: 1;
+}
+
+/* Landing Footer */
 .landing-footer {
-  padding-top: 40px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  margin-top: 60px;
+  padding-top: 60px;
+  border-top: 1px solid rgba(59, 130, 246, 0.2);
+  margin-top: 80px;
+  position: relative;
+}
+
+.landing-footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  height: 1px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    var(--accent-blue) 50%, 
+    transparent 100%
+  );
+  box-shadow: 0 0 10px rgba(96, 165, 250, 0.5);
 }
 
 .landing-footer p {
-  color: var(--muted);
-  font-size: 1rem;
+  color: var(--text-muted);
+  font-size: 1.1rem;
   margin: 0;
   opacity: 0.8;
+  font-weight: 500;
+  text-shadow: 0 0 10px rgba(148, 163, 184, 0.3);
+  transition: all 0.3s ease;
+}
+
+.landing-footer p:hover {
+  opacity: 1;
+  color: var(--text-secondary);
+}
+
+/* Animations */
+@keyframes pageEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes backgroundFloat {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  33% {
+    transform: translateY(-10px) rotate(1deg);
+  }
+  66% {
+    transform: translateY(5px) rotate(-1deg);
+  }
 }
 
 /* Responsive Design */
+@media (max-width: 1024px) {
+  .landing-page {
+    padding: 60px 20px;
+  }
+  
+  .landing-header h1 {
+    font-size: 3.5rem;
+  }
+  
+  .role-cards {
+    gap: 32px;
+  }
+  
+  .role-card {
+    padding: 40px 32px;
+  }
+}
+
 @media (max-width: 768px) {
   .landing-page {
     padding: 40px 16px;
   }
 
   .landing-header h1 {
-    font-size: 2.5rem;
+    font-size: 2.8rem;
   }
 
   .tagline {
-    font-size: 1.4rem;
+    font-size: 1.6rem;
   }
 
   .description {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
   }
 
   .role-cards {
     grid-template-columns: 1fr;
-    gap: 24px;
+    gap: 32px;
     margin-top: 60px;
+  }
+
+  .role-card {
+    padding: 36px 28px;
+  }
+
+  .card-icon {
+    width: 80px;
+    height: 80px;
+  }
+
+  .role-card h3 {
+    font-size: 1.8rem;
+  }
+
+  .feature-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .feature-item {
+    padding: 32px 24px;
+  }
+  
+  .landing-features h2 {
+    font-size: 2.4rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .landing-header h1 {
+    font-size: 2.4rem;
+  }
+
+  .tagline {
+    font-size: 1.4rem;
   }
 
   .role-card {
@@ -251,21 +705,16 @@
   }
 
   .card-icon {
-    width: 60px;
-    height: 60px;
+    width: 70px;
+    height: 70px;
   }
 
   .role-card h3 {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
   }
-
-  .feature-grid {
-    grid-template-columns: 1fr;
-    gap: 24px;
-  }
-
-  .feature-item {
-    padding: 24px 20px;
+  
+  .landing-features h2 {
+    font-size: 2rem;
   }
 }
 
@@ -279,41 +728,42 @@
   }
 
   .role-card {
-    padding: 24px 20px;
+    padding: 28px 20px;
   }
 
   .card-icon {
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
   }
 
   .role-card h3 {
-    font-size: 1.3rem;
+    font-size: 1.4rem;
+  }
+  
+  .role-btn {
+    padding: 16px 32px;
+    font-size: 1.1rem;
+  }
+  
+  .feature-item {
+    padding: 28px 20px;
   }
 }
 
-/* Animation for landing page */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* Scroll-triggered animations */
+.animate-on-scroll {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
-.landing-header,
-.role-selection,
-.landing-features {
-  animation: fadeInUp 0.6s ease-out;
+.animate-on-scroll.in-view {
+  opacity: 1;
+  transform: translateY(0);
 }
 
-.role-selection {
-  animation-delay: 0.2s;
-}
-
-.landing-features {
-  animation-delay: 0.4s;
-}
+/* Staggered animations for feature items */
+.feature-item:nth-child(1) { animation-delay: 0.1s; }
+.feature-item:nth-child(2) { animation-delay: 0.2s; }
+.feature-item:nth-child(3) { animation-delay: 0.3s; }
+.feature-item:nth-child(4) { animation-delay: 0.4s; }

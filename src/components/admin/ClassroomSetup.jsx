@@ -158,7 +158,7 @@ function ClassroomSetup({ onClassroomCreated, onBack }) {
               className="classroom-input"
               value={formData.adminName}
               onChange={handleInputChange}
-              placeholder="e.g., Alice Johnson, John Doe"
+              
               required
             />
           </div>
