@@ -1,6 +1,7 @@
+"use client";
 import React from 'react';
-import MultiBreakroomTimers from '../components/spectator/MultiBreakroomTimers';
-import { DebateProvider } from '../context/DebateContext';
+import MultiBreakroomTimers from '@/components/spectator/MultiBreakroomTimers';
+import { DebateProvider } from '@/context/DebateContext';
 
 export default function TimerTestPage() {
   const breakrooms = ['BR-101', 'BR-102', 'BR-103', 'BR-201', 'BR-202'];
