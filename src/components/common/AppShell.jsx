@@ -52,32 +52,22 @@ function AppShell() {
   }, []);
   // In src/components/common/AppShell.jsx
 
-useEffect(() => {
-  // Only run this listener if we have a logged-in student
-  if (userRole === 'spectator' && currentStudent?.admissionNumber && currentClassroom?.id) {
-    
-    const unsubscribe = subscribeToStudent(
-      currentClassroom.id, 
-      currentStudent.admissionNumber, 
-      (studentData) => {
-        // This callback fires whenever the student's document changes
-        
-        // If studentData is null, it means they were deleted by the admin
-        if (studentData === null) {
-          console.log("Student document was deleted. Forcing logout.");
-          
-          // Force a logout. Check if we are not already logged out to prevent loops.
-          if (isAuthenticated) {
+  useEffect(() => {
+    if (userRole === 'spectator' && currentStudent?.phoneNumber && currentClassroom?.id) {
+      const unsubscribe = subscribeToStudent(
+        currentClassroom.id, 
+        currentStudent.phoneNumber, 
+        (studentData) => {
+          // If studentData comes back as null, it means they were deleted
+          if (studentData === null && isAuthenticated) {
+            console.log("Student was removed by admin. Forcing logout.");
             handleLogout();
           }
         }
-      }
-    );
-    
-    // Clean up the listener when the component unmounts or user changes
-    return () => unsubscribe();
-  }
-}, [userRole, currentStudent, currentClassroom, isAuthenticated]); // Dependencies
+      );
+      return () => unsubscribe(); // Clean up the listener
+    }
+  }, [userRole, currentStudent, currentClassroom, isAuthenticated]);
   const handleRoleSelect = (role) => {
     setUserRole(role);
   };

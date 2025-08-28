@@ -300,40 +300,45 @@ export const updateTeams = async (classroomId, teamA, teamB) => {
 };
 
 // Remove student from team (Admin only)
-export const removeStudentFromTeam = async (classroomId, studentPhoneNumber) => {
+export const removeStudentFromTeam = async (classroomId, phoneNumber) => {
+  if (!classroomId || !phoneNumber) {
+    throw new Error('Classroom ID and phone number are required.');
+  }
+
+  const teamsRef = doc(db, 'teams', classroomId);
+  const studentRef = doc(db, 'students', `${classroomId}_${phoneNumber}`);
+
   try {
-    if (!classroomId || !studentPhoneNumber) {
-      throw new Error('Classroom ID and phone number are required.');
-    }
+    // A transaction guarantees this whole block runs safely
+    await runTransaction(db, async (transaction) => {
+      const teamsSnap = await transaction.get(teamsRef);
+      if (!teamsSnap.exists()) {
+        throw new Error("Teams document not found!");
+      }
 
-    // First, find the student to know which team they are on
-    const studentRef = doc(db, 'students', `${classroomId}_${studentPhoneNumber}`);
-    const studentSnap = await getDoc(studentRef);
+      const currentTeams = teamsSnap.data();
 
-    if (!studentSnap.exists()) {
-      console.warn("Attempted to remove a student who doesn't exist.");
-      return; // Exit if the student is already gone
-    }
+      // Create new team arrays by filtering out the student to be removed
+      const newTeamA = currentTeams.teamA.filter(
+        student => student.phoneNumber !== phoneNumber
+      );
+      const newTeamB = currentTeams.teamB.filter(
+        student => student.phoneNumber !== phoneNumber
+      );
 
-    const studentData = studentSnap.data();
-    const teamField = studentData.assignedTeam === 'A' ? 'teamA' : 'teamB';
-
-    // Atomically remove the student from the correct team array in the master roster
-    const teamsRef = doc(db, 'teams', classroomId);
-    await updateDoc(teamsRef, {
-      [teamField]: arrayRemove(studentData)
+      // Queue the updates to be written back to the database
+      transaction.update(teamsRef, { teamA: newTeamA, teamB: newTeamB });
+      transaction.delete(studentRef);
     });
 
-    // Finally, delete the individual student document
-    await deleteDoc(studentRef);
-
+    console.log(`Successfully removed student ${phoneNumber}`);
     return true;
 
   } catch (error) {
+    // This will now correctly catch errors from inside the transaction
     handleFirebaseError(error, 'removeStudentFromTeam');
   }
 };
-// Clear all teams (Admin only)
 export const clearAllTeams = async (classroomId) => {
   try {
     if (!classroomId) {

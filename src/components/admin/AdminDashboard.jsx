@@ -193,10 +193,9 @@ useEffect(() => {
     } catch (error) {
       actions.setError('Failed to remove student');
     } finally {
-      setRemovingStudentId(null); // Re-enable buttons when done
+      setRemovingStudentId(null); // Re-enable all buttons when done
     }
   };
-
   const handleClearAllTeams = async () => {
     if (!activeClassroom) return;
 
@@ -578,61 +577,70 @@ useEffect(() => {
 
               {/* Teams Display */}
               <div className="teams-display">
-                <div className="team-section">
-                  <h4>Team A ({state.teamA.length} students)</h4>
-                  <ul className="team-list">
-                    {state.teamA.map((student, index) => (
-                      <li key={student.phoneNumber || index} className="team-member">
-                        <div className="student-info">
-                          <span className="student-name">{student.name}</span>
-                          <span className="student-id">ID: {student.phoneNumber}</span>
-                          <span className="join-time">
-                            Joined: {isClient ? new Date(student.joinedAt).toLocaleTimeString() : '...'}
-                          </span>
-                        </div>
-                        <button
-                          onClick={() => handleRemoveStudent(student.phoneNumber)}
-                          className="remove-btn"
-                          disabled={removingStudentId === student.phoneNumber}
-                        >
-                          {removingStudentId === student.phoneNumber ? '...' : '×'}
-                        </button>
-                      </li>
-                    ))}
-                    {state.teamA.length === 0 && (
-                      <li className="no-members">No students assigned yet</li>
-                    )}
-                  </ul>
-                </div>
+  <div className="team-section">
+    <h4>Team A ({state.teamA.length} students)</h4>
+    <ul className="team-list">
+      {state.teamA.map((student, index) => (
+        <li key={student.phoneNumber || index} className="team-member">
+          <div className="student-info">
+            <span className="student-name">{student.name}</span>
+            <span className="student-id">ID: {student.phoneNumber}</span>
+            <span className="join-time">
+              Joined: {isClient ? new Date(student.joinedAt).toLocaleTimeString() : '...'}
+            </span>
+          </div>
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              handleRemoveStudent(student.phoneNumber);
+            }}
+            className="remove-btn"
+            disabled={removingStudentId === student.phoneNumber}
+            title="Remove student"
+          >
+            {removingStudentId === student.phoneNumber ? '...' : '×'}
+          </button>
+        </li>
+      ))}
+      {state.teamA.length === 0 && (
+        <li className="no-members">No students assigned yet</li>
+      )}
+    </ul>
+  </div>
 
-                <div className="team-section">
-                  <h4>Team B ({state.teamB.length} students)</h4>
-                  <ul className="team-list">
-                    {state.teamB.map((student, index) => (
-                      <li key={student.phoneNumber || index} className="team-member">
-                        <div className="student-info">
-                          <span className="student-name">{student.name}</span>
-                          <span className="student-id">ID: {student.phoneNumber}</span>
-                          <span className="join-time">
-                            Joined: {new Date(student.joinedAt).toLocaleTimeString() || '...'}
-                          </span>
-                        </div>
-                        <button
-                          onClick={() => handleRemoveStudent(student.phoneNumber)}
-                          className="remove-btn"
-                          title="Remove student"
-                        >
-                          ×
-                        </button>
-                      </li>
-                    ))}
-                    {state.teamB.length === 0 && (
-                      <li className="no-members">No students assigned yet</li>
-                    )}
-                  </ul>
-                </div>
-              </div>
-
+  <div className="team-section">
+    <h4>Team B ({state.teamB.length} students)</h4>
+    <ul className="team-list">
+      {state.teamB.map((student, index) => (
+        <li key={student.phoneNumber || index} className="team-member">
+          <div className="student-info">
+            <span className="student-name">{student.name}</span>
+            <span className="student-id">ID: {student.phoneNumber}</span>
+            <span className="join-time">
+              Joined: {isClient ? new Date(student.joinedAt).toLocaleTimeString() : '...'}
+            </span>
+          </div>
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              handleRemoveStudent(student.phoneNumber);
+            }}
+            className="remove-btn"
+            disabled={removingStudentId === student.phoneNumber}
+            title="Remove student"
+          >
+            {removingStudentId === student.phoneNumber ? '...' : '×'}
+          </button>
+        </li>
+      ))}
+      {state.teamB.length === 0 && (
+        <li className="no-members">No students assigned yet</li>
+      )}
+    </ul>
+  </div>
+</div>
               {students.length > 0 && (
                 <div className="team-actions">
                   <div className="balance-info">
@@ -655,7 +663,6 @@ useEffect(() => {
                 <li><strong>Share the password:</strong> Students use "{activeClassroom.password}" to join</li>
                 <li><strong>Auto-assignment:</strong> Students are automatically balanced between teams</li>
                 <li><strong>Student registration:</strong> Each student provides name and phone number</li>
-                <li><strong>Remove students:</strong> Click the × next to any student to remove them</li>
                 <li><strong>Start when ready:</strong> Both teams need at least one student to begin</li>
               </ul>
             </div>
