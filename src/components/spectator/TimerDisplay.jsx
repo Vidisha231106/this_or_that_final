@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDebate } from '@/context/DebateContext';
 import { Clock } from 'lucide-react';
-import './TimerDisplay.css';
+import '@styles/TimerDisplay.css';
 
 function TimerDisplay() {
   const { state } = useDebate();
