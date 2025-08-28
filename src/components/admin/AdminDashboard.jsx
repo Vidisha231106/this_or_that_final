@@ -123,6 +123,7 @@ useEffect(() => {
 
     // Subscribe to the list of games for this classroom
     const unsubscribe = subscribeToGamesList(activeClassroom.id, (gamesList) => {
+      console.log("Games list update:", gamesList);
       setGames(gamesList);
     });
 
@@ -241,7 +242,6 @@ useEffect(() => {
 };
   const handleCreateGame = async (gameData) => {
     if (!activeClassroom) return;
-
     try {
       // Call the service function to create the game in Firestore
       await createGame(activeClassroom.id, gameData);
@@ -536,12 +536,9 @@ useEffect(() => {
                     <div className="vote-display">
                       <div className="vote-item">
                         <span>Vote to SWITCH:</span>
-                        <span className="vote-count">{activeGame.votes.switch}</span>
+                        <span className="vote-count">{activeGame.votes.switch || 0}</span>
                       </div>
-                      <div className="vote-item">
-                        <span>Vote to KEEP:</span>
-                        <span className="vote-count">{activeGame.votes.dontSwitch}</span>
-                      </div>
+                     
                     </div>
 
                     <div className="main-controls">

@@ -93,13 +93,6 @@ export const createClassroom = async (classroomData) => {
     await setDoc(classroomRef, classroom);
 
     // This part remains the same
-    if (classroomData.topic) {
-      await createGame(classroom.id, {
-        gameName: "Game 1",
-        topic: classroomData.topic,
-      });
-    }
-
     return classroom;
 
   } catch (error) {

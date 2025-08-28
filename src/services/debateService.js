@@ -550,6 +550,7 @@ export const subscribeToBreakroomTimer = (classroomId, breakroomId, callback) =>
   }
 };
 export const createGame = async (classroomId, gameData) => {
+  console.log("2. debateService received a request to create a game.");
   try {
     if (!classroomId || !gameData) {
       throw new Error('Classroom ID and game data are required.');

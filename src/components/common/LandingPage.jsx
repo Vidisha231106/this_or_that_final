@@ -1,6 +1,5 @@
 "use client";
 import React from 'react';
-import { Users, UserCheck } from 'lucide-react';
 import './LandingPage.css';
 
 function LandingPage({ onRoleSelect }) {
@@ -14,12 +13,7 @@ function LandingPage({ onRoleSelect }) {
             <p>
               Participate in live debates, vote on arguments, and engage in classroom discussions
             </p>
-            <ul className="feature-list">
-              <li>Join debates with a password</li>
-              <li>Vote on team performance</li>
-              <li>Real-time participation</li>
-              <li>See live vote counts</li>
-            </ul>
+            
             <button className="role-btn">
               Join Debate Session !
             </button>
@@ -31,12 +25,7 @@ function LandingPage({ onRoleSelect }) {
             <p>
               Create and manage debate sessions, organize teams, and moderate discussions
             </p>
-            <ul className="feature-list">
-              <li>Create debate sessions</li>
-              <li>Manage student teams</li>
-              <li>Set debate topics</li>
-              <li>Control debate flow</li>
-            </ul>
+            
             <button className="role-btn">
               Volunteer Login
             </button>

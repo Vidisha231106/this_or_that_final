@@ -640,6 +640,7 @@ body {
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 1.5rem;
   margin: 2rem 0;
+  text-align: center;
 }
 
 .vote-item {
@@ -652,6 +653,7 @@ body {
   backdrop-filter: blur(15px);
   position: relative;
   overflow: hidden;
+  display: inline-block;
 }
 
 .vote-item::before {
@@ -689,11 +691,11 @@ body {
 .vote-count {
   font-size: 2.5rem;
   font-weight: 800;
-  color: var(--text-primary);
+  color: red;
   text-shadow: 0 0 20px rgba(96, 165, 250, 0.6);
   background: linear-gradient(135deg, var(--text-primary), var(--light-blue));
   -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  -webkit-text-fill-color: initial;
   background-clip: text;
 }
 
