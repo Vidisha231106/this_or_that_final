@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDebate } from '@/context/DebateContext';
 import { Clock } from 'lucide-react';
-import '@/components/spectator/TimerDisplay.css';
 function TimerDisplay() {
   const { state } = useDebate();
   // Get the timer data directly from the main context state
