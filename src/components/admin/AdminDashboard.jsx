@@ -287,7 +287,7 @@ function AdminDashboard() {
     }
 
     setIsGeneratingTopic(true);
-    setError('');
+    actions.setError('');
 
     try {
       const topic = await generateDebateTopic();
@@ -519,6 +519,16 @@ function AdminDashboard() {
                   <div className="active-debate">
                     <TimerDisplay />
                     <p>
+                    <div className="vote-display">
+                  <div className="vote-item">
+                    <span>Vote to SWITCH:</span>
+                    <span className="vote-count">{activeGame.votes.switch}</span>
+                  </div>
+                  <div className="vote-item">
+                    <span>Vote to KEEP:</span>
+                    <span className="vote-count">{activeGame.votes.dontSwitch}</span>
+                  </div>
+                </div>
                       <strong>Currently Speaking:</strong> Team {activeGame.speakingFor}
                       ({activeGame.speakingFor === 'A' ? activeGame.teamAStance : (activeGame.teamAStance === 'Pro' ? 'Con' : 'Pro')})
                     </p>

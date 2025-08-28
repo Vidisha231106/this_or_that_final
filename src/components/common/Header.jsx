@@ -11,8 +11,7 @@ function Header({ userRole, currentClassroom, currentStudent, onLogout }) {
     <header className="app-header">
       <div className="header-content">
         <div className="header-left">
-          <h1 className="app-title">This Or That</h1>
-          <span className="app-tagline">Speak. Listen. Convince.</span>
+          
         </div>
 
         <div className="header-center">

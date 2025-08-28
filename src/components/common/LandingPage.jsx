@@ -7,11 +7,7 @@ function LandingPage({ onRoleSelect }) {
   return (
     <div className="landing-page">
       <div className="landing-header">
-        <h1>This Or That</h1>
-        <p className="tagline">Speak. Listen. Convince.</p>
-        <p className="description">
-          An interactive debate platform for classrooms and educational settings
-        </p>
+        
       </div>
 
       <div className="role-selection">

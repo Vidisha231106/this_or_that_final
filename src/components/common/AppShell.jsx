@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { useDebate } from '@/context/DebateContext';
+import { subscribeToStudent } from '@/services/debateService';
 
 // Components
 import LandingPage from '@/components/common/LandingPage';
@@ -9,6 +10,7 @@ import AdminDashboard from '@/components/admin/AdminDashboard';
 import SpectatorJoin from '@/components/spectator/SpectatorJoin';
 import SpectatorView from '@/components/spectator/SpectatorView';
 import Header from '@/components/common/Header';
+import LandingHeader from '@/components/common/LandingHeader';
 
 function AppShell() {
   const { state, actions } = useDebate();
@@ -22,24 +24,23 @@ function AppShell() {
   // This effect runs only once in the browser to ensure no hydration errors
   useEffect(() => {
     setHasMounted(true);
-  }, []);
-
-  // This effect handles loading a previously saved session
-  useEffect(() => {
+    const savedRole = localStorage.getItem('userRole');
+    const savedAuth = localStorage.getItem('isAuthenticated') === 'true';
     const savedClassroomString = localStorage.getItem('currentClassroom');
-    if (savedClassroomString) {
+    
+    if (savedRole && savedAuth && savedClassroomString) {
       try {
         const classroom = JSON.parse(savedClassroomString);
         const studentString = localStorage.getItem('currentStudent');
         const student = studentString ? JSON.parse(studentString) : null;
 
-        // CRUCIAL: Tell the context which classroom is active
+        // CRUCIAL: Tell the context which classroom is active FIRST
         actions.setClassroom(classroom);
         
-        // Update the local state
+        // Then, update the local state
         setCurrentClassroom(classroom);
         setCurrentStudent(student);
-        setUserRole(localStorage.getItem('userRole'));
+        setUserRole(savedRole);
         setIsAuthenticated(true);
       } catch (error) {
         console.error('Failed to parse saved session, clearing...', error);
@@ -47,8 +48,36 @@ function AppShell() {
       }
     }
     setIsLoading(false);
-  }, []); // Runs only once on initial load
 
+  }, []);
+  // In src/components/common/AppShell.jsx
+
+useEffect(() => {
+  // Only run this listener if we have a logged-in student
+  if (userRole === 'spectator' && currentStudent?.admissionNumber && currentClassroom?.id) {
+    
+    const unsubscribe = subscribeToStudent(
+      currentClassroom.id, 
+      currentStudent.admissionNumber, 
+      (studentData) => {
+        // This callback fires whenever the student's document changes
+        
+        // If studentData is null, it means they were deleted by the admin
+        if (studentData === null) {
+          console.log("Student document was deleted. Forcing logout.");
+          
+          // Force a logout. Check if we are not already logged out to prevent loops.
+          if (isAuthenticated) {
+            handleLogout();
+          }
+        }
+      }
+    );
+    
+    // Clean up the listener when the component unmounts or user changes
+    return () => unsubscribe();
+  }
+}, [userRole, currentStudent, currentClassroom, isAuthenticated]); // Dependencies
   const handleRoleSelect = (role) => {
     setUserRole(role);
   };
@@ -60,29 +89,35 @@ function AppShell() {
     localStorage.setItem('adminData', JSON.stringify(adminData));
   };
 
-  const handleSpectatorJoin = (classroom, studentData) => {
-    try {
-      // 1. Tell the context which classroom is now active
-      actions.setClassroom(classroom);
+// In src/components/common/AppShell.jsx
+const handleSpectatorJoin = (classroom, studentData) => {
+  try {
+    // 1. Tell the context which classroom is now active
+    actions.setClassroom(classroom);
 
-      // 2. Update the local state
-      setIsAuthenticated(true);
-      setCurrentClassroom(classroom);
-      setCurrentStudent(studentData);
-      setUserRole('spectator');
+    // 2. Update the local state
+    setIsAuthenticated(true);
+    setCurrentClassroom(classroom);
+    setCurrentStudent(studentData);
+    setUserRole('spectator');
 
-      // 3. Save the session to localStorage for rejoining
-      localStorage.setItem('userRole', 'spectator');
-      localStorage.setItem('isAuthenticated', 'true');
-      localStorage.setItem('currentClassroom', JSON.stringify(classroom));
-      localStorage.setItem('currentStudent', JSON.stringify(studentData));
-      localStorage.setItem(`student_details_${classroom.id}`, JSON.stringify(studentData));
-    } catch (error) {
-      console.error('Error setting spectator session:', error);
-    }
-  };
+    // 3. Save the session to localStorage for rejoining
+    localStorage.setItem('userRole', 'spectator');
+    localStorage.setItem('isAuthenticated', 'true');
+    localStorage.setItem('currentClassroom', JSON.stringify(classroom));
+    localStorage.setItem('currentStudent', JSON.stringify(studentData));
+    // Save the "remember me" details for this specific classroom
+    localStorage.setItem(`student_details_${classroom.id}`, JSON.stringify(studentData));
 
+  } catch (error) {
+    console.error('Error setting spectator session:', error);
+  }
+};
   const handleLogout = () => {
+    if (currentClassroom?.id) {
+      localStorage.removeItem(`student_details_${currentClassroom.id}`);
+    }
+    actions.resetState();
     setUserRole(null);
     setIsAuthenticated(false);
     setCurrentClassroom(null);
@@ -105,10 +140,14 @@ function AppShell() {
   // Main render logic
   return (
     <div className="app-container">
+       {userRole ? (
       <Header 
         userRole={userRole}
         onLogout={handleLogout}
       />
+    ) : (
+      <LandingHeader />
+    )}
       
       {(() => {
         if (isAuthenticated) {

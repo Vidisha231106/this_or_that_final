@@ -28,6 +28,11 @@ function CreateGameModal({ teamA, teamB, onCreate, onCancel }) {
       alert('Please enter a name for the game.');
       return;
     }
+    if (selectedTeamA.length === 0 || selectedTeamB.length === 0) {
+      alert('You must select at least one player for each team.');
+      return;
+    }
+  
     onCreate({
       gameName,
       teamAPlayers: selectedTeamA,

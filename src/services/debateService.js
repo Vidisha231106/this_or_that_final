@@ -12,7 +12,8 @@ import {
   where,
   getDocs,
   deleteDoc,
-  runTransaction
+  runTransaction,
+  arrayRemove
 } from 'firebase/firestore';
 
 // Helper function to handle Firebase errors
@@ -307,52 +308,36 @@ export const updateTeams = async (classroomId, teamA, teamB) => {
 export const removeStudentFromTeam = async (classroomId, studentAdmissionNumber) => {
   try {
     if (!classroomId || !studentAdmissionNumber) {
-      throw new Error('Classroom ID and student admission number are required');
+      throw new Error('Classroom ID and admission number are required.');
     }
-    
-    const teamsRef = doc(db, 'teams', classroomId);
-    const teamsSnap = await getDoc(teamsRef);
-    
-    if (!teamsSnap.exists()) {
-      throw new Error('Teams data not found');
-    }
-    
-    const currentTeams = teamsSnap.data();
-    
-    // Ensure teams arrays exist
-    if (!Array.isArray(currentTeams.teamA)) currentTeams.teamA = [];
-    if (!Array.isArray(currentTeams.teamB)) currentTeams.teamB = [];
-    
-    // Find and remove student from appropriate team
-    const teamAFiltered = currentTeams.teamA.filter(
-      student => student.admissionNumber !== studentAdmissionNumber
-    );
-    const teamBFiltered = currentTeams.teamB.filter(
-      student => student.admissionNumber !== studentAdmissionNumber
-    );
-    
-    // Update teams
-    await setDoc(teamsRef, {
-      teamA: teamAFiltered,
-      teamB: teamBFiltered,
-      lastUpdated: new Date().toISOString()
-    }, { merge: true });
-    
-    // Remove from students collection
+
+    // First, find the student to know which team they are on
     const studentRef = doc(db, 'students', `${classroomId}_${studentAdmissionNumber}`);
-    try {
-      await setDoc(studentRef, {}, { merge: false }); // This effectively deletes the document
-    } catch (deleteError) {
-      console.warn('Could not delete student document:', deleteError);
-      // Continue anyway since team removal was successful
+    const studentSnap = await getDoc(studentRef);
+
+    if (!studentSnap.exists()) {
+      console.warn("Attempted to remove a student who doesn't exist.");
+      return; // Exit if the student is already gone
     }
-    
+
+    const studentData = studentSnap.data();
+    const teamField = studentData.assignedTeam === 'A' ? 'teamA' : 'teamB';
+
+    // Atomically remove the student from the correct team array in the master roster
+    const teamsRef = doc(db, 'teams', classroomId);
+    await updateDoc(teamsRef, {
+      [teamField]: arrayRemove(studentData)
+    });
+
+    // Finally, delete the individual student document
+    await deleteDoc(studentRef);
+
     return true;
+
   } catch (error) {
     handleFirebaseError(error, 'removeStudentFromTeam');
   }
 };
-
 // Clear all teams (Admin only)
 export const clearAllTeams = async (classroomId) => {
   try {
@@ -639,5 +624,16 @@ export const deleteGame = async (classroomId, gameId) => {
     return true;
   } catch (error) {
     handleFirebaseError(error, 'deleteGame');
+  }
+};
+export const subscribeToStudent = (classroomId, admissionNumber, callback) => {
+  try {
+    const studentRef = doc(db, 'students', `${classroomId}_${admissionNumber}`);
+    return onSnapshot(studentRef, (doc) => {
+      callback(doc.exists() ? doc.data() : null);
+    });
+  } catch (error) {
+    console.error("Error subscribing to student:", error);
+    return () => {};
   }
 };

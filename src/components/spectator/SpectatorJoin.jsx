@@ -25,33 +25,33 @@ function SpectatorJoin({ onJoin, onBack }) {
       setError('Please enter a session password');
       return;
     }
-
+  
     setIsJoining(true);
     setError('');
-
+  
     try {
       const foundClassroom = await getClassroomByPassword(password.trim());
       
-      if (!foundClassroom) {
-        setError('Invalid session password. Please check with the volunteer.');
+      // 1. First, check if the classroom is valid
+      if (!foundClassroom || !foundClassroom.isActive) {
+        setError('Invalid or inactive session password. Please check with the volunteer.');
+        setIsJoining(false);
         return;
       }
-    const savedDetails = localStorage.getItem(`student_details_${foundClassroom.id}`);
-    if (savedDetails) {
-      // If details are found, show the quick rejoin prompt
-      setReturningStudent(JSON.parse(savedDetails));
-    } else {
-      // If no details are found, show the normal registration form
+      
+      // If valid, save it to state
       setClassroom(foundClassroom);
-      setShowRegistration(true);
-    }
-      if (!foundClassroom.isActive) {
-        setError('This debate session is no longer active.');
-        return;
+  
+      // 2. Now, decide what to show the user
+      const savedDetails = localStorage.getItem(`student_details_${foundClassroom.id}`);
+      if (savedDetails) {
+        // If they are a returning student, show the rejoin prompt
+        setReturningStudent(JSON.parse(savedDetails));
+      } else {
+        // If they are a new student, show the registration form
+        setShowRegistration(true);
       }
-
-      setClassroom(foundClassroom);
-      setShowRegistration(true);
+  
     } catch (error) {
       console.error('Join session error:', error);
       setError('Failed to join session. Please try again.');
@@ -59,7 +59,6 @@ function SpectatorJoin({ onJoin, onBack }) {
       setIsJoining(false);
     }
   };
-
   const handleRegistrationComplete = (studentData) => {
     // Pass both classroom and student data to the parent component
     onJoin(classroom, studentData);
