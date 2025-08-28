@@ -10,11 +10,8 @@ import {
 import './ClassroomSetup.css';
 
 const classOptions = [
-  "AIML-CR001","AIML-CR002","BT-217","BT-218","CH-104","CH-105",
-  "CE-204","CE-205","CE-217","CE-312","CE-317","CE-319",
-  "EE-116","EE-117","EE-112","EE-203","EE-202","EE-215",
-  "EC-203","EC-204","EC-205","EC-211","EC-212","EC-214",
-  "IS-112B","IS-106A"
+  "CV-306","CV-304","CV-217","CV-312","CV-317","CV-319",
+  "EE-116","EE-117","EE-112","EE-203"
 ];
 
 function ClassroomSetup({ onClassroomCreated, onBack }) {
