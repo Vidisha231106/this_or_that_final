@@ -150,14 +150,6 @@ function AdminLogin({ onAuth, onBack }) {
         </form>
 
         <div className="login-help">
-          <div className="help-section">
-            <h4>Demo Access Codes</h4>
-            <div className="demo-codes">
-              <code>TEACHER2024</code>
-              <code>ADMIN123</code>
-              <code>EDUCATOR</code>
-            </div>
-          </div>
           
           <div className="help-section">
             <h4>Need Help?</h4>
