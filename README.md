@@ -4,10 +4,7 @@
 
 A modern, interactive debate application designed for educational environments. Built with Next.js and Firebase, featuring real-time team management, automated student assignment, and live voting capabilities.
 
-[![Next.js](https://img.shields.io/badge/Next.js-15.5.0-black)](https://nextjs.org/)
-[![React](https://img.shields.io/badge/React-19.1.0-blue)](https://reactjs.org/)
-[![Firebase](https://img.shields.io/badge/Firebase-10.14.1-orange)](https://firebase.google.com/)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](https://opensource.org/licenses/MIT)
+
 
 ## 📚 Project History
 
